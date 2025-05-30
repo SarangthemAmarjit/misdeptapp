@@ -1,45 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:misdeptapp/config/responsive.dart';
 
 class HealthcareStatsSection extends StatelessWidget {
   const HealthcareStatsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isSmallScreen = width < 600;
-    final isTablet = width >= 600 && width < 900;
+    final ismobile =
+        Responsive.isMobile(context) || Responsive.isMobtab(context);
+    final isTablet = Responsive.isTablet(context);
 
     // Adjust font size responsively
     double titleFontSize =
-        isSmallScreen
-            ? 28
+        Responsive.isMobile(context)
+            ? 24
+            : Responsive.isMobtab(context)
+            ? 34
             : isTablet
             ? 38
             : 50;
 
     double statFontSize =
-        isSmallScreen
-            ? 32
+        Responsive.isMobile(context)
+            ? 30
+            : Responsive.isMobtab(context)
+            ? 42
             : isTablet
-            ? 44
-            : 55;
+            ? 28
+            : 50;
 
     double spacing =
-        isSmallScreen
-            ? 20
+        ismobile
+            ? 10
             : isTablet
             ? 40
             : 60;
 
     double runSpacing =
-        isSmallScreen
-            ? 20
+        ismobile
+            ? 10
             : isTablet
             ? 28
             : 32;
 
     int statColumns =
-        isSmallScreen
+        ismobile
             ? 2
             : isTablet
             ? 4
@@ -47,9 +52,9 @@ class HealthcareStatsSection extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: isSmallScreen ? 8 : 20,
-        right: isSmallScreen ? 8 : 20,
-        bottom: isSmallScreen ? 24 : 48,
+        left: ismobile ? 8 : 20,
+        right: ismobile ? 8 : 20,
+        bottom: ismobile ? 24 : 48,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,18 +68,25 @@ class HealthcareStatsSection extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: isSmallScreen ? 16 : 32),
+          SizedBox(height: ismobile ? 16 : 32),
           LayoutBuilder(
             builder: (context, constraints) {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 100),
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      ismobile
+                          ? 50
+                          : isTablet
+                          ? 60
+                          : 100,
+                ),
                 child: GridView.count(
                   shrinkWrap: true,
                   crossAxisCount: statColumns,
                   crossAxisSpacing: spacing,
                   mainAxisSpacing: runSpacing,
                   physics: const NeverScrollableScrollPhysics(),
-                  childAspectRatio: isSmallScreen ? 1.8 : 1.6,
+                  childAspectRatio: ismobile ? 2 / 2 : 5 / 4,
                   children: [
                     _StatItem(
                       number: "12,000",
@@ -101,7 +113,7 @@ class HealthcareStatsSection extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: isSmallScreen ? 16 : 32),
+          SizedBox(height: ismobile ? 16 : 32),
           OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
@@ -109,8 +121,8 @@ class HealthcareStatsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 16 : 24,
-                vertical: isSmallScreen ? 8 : 12,
+                horizontal: ismobile ? 16 : 24,
+                vertical: ismobile ? 8 : 12,
               ),
               side: const BorderSide(color: Colors.blue),
             ),
@@ -118,7 +130,7 @@ class HealthcareStatsSection extends StatelessWidget {
               "More details",
               style: TextStyle(
                 color: Colors.blue,
-                fontSize: isSmallScreen ? 14 : 16,
+                fontSize: ismobile ? 14 : 16,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -143,6 +155,7 @@ class _StatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(

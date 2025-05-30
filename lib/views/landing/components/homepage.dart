@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:misdeptapp/config/responsive.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -6,26 +7,34 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isMobile = size.width < 700;
+    final ismobile =
+        Responsive.isMobile(context) || Responsive.isMobtab(context);
+
+    final isTablet = Responsive.isTablet(context);
 
     Widget leftContent = Container(
-      width: isMobile ? double.infinity : null,
-      height: isMobile ? null : size.height * 0.80,
+      width: ismobile ? double.infinity : null,
+      height: ismobile ? null : size.height * 0.80,
       color: const Color(0xFF0C5A7C),
       padding: const EdgeInsets.all(32),
       child: Padding(
-        padding: EdgeInsets.only(left: isMobile ? 0 : 50),
+        padding: EdgeInsets.only(left: ismobile ? 30 : 50),
         child: Align(
-          alignment: Alignment.center,
+          alignment: ismobile ? Alignment.centerLeft : Alignment.center,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: isMobile ? MainAxisSize.min : MainAxisSize.max,
+            mainAxisSize: ismobile ? MainAxisSize.min : MainAxisSize.max,
             children: [
               Text(
                 "Improving Our\nHealth In The\nNext Bound",
                 style: TextStyle(
-                  fontSize: isMobile ? 32 : 60,
+                  fontSize:
+                      ismobile
+                          ? 32
+                          : isTablet
+                          ? 40
+                          : 60,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   letterSpacing: 3,
@@ -60,19 +69,19 @@ class HomePage extends StatelessWidget {
     );
 
     Widget rightContent = SizedBox(
-      width: isMobile ? double.infinity : null,
-      height: isMobile ? 220 : size.height * 0.80,
+      width: ismobile ? double.infinity : null,
+      height: ismobile ? 220 : size.height * 0.80,
       child: Image.asset('assets/images/landing.png', fit: BoxFit.cover),
     );
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: isMobile ? 24 : size.height * 0.15,
-        left: isMobile ? 0 : 0,
-        right: isMobile ? 0 : 0,
+        bottom: ismobile ? 24 : size.height * 0.15,
+        left: ismobile ? 0 : 0,
+        right: ismobile ? 0 : 0,
       ),
       child:
-          isMobile
+          ismobile
               ? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [leftContent, rightContent],

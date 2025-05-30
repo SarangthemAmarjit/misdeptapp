@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:misdeptapp/config/responsive.dart';
 
@@ -7,7 +9,9 @@ class HealthcareJourneySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    log(width.toString());
     final ismobile = Responsive.isMobile(context);
+    final ismobtab = Responsive.isMobtab(context);
     final isTablet = Responsive.isTablet(context);
 
     final List<Map<String, String>> cards = [
@@ -47,15 +51,20 @@ class HealthcareJourneySection extends StatelessWidget {
     double cardImageHeight =
         ismobile
             ? 250
+            : ismobtab
+            ? 190
             : isTablet
             ? 220
             : 290;
     double cardAspectRatio =
         ismobile
             ? 3 / 2.8
+            : ismobtab
+            ? 3 / 4.5
             : isTablet
-            ? 3 / 2.4
-            : 3 / 2.2;
+            ? width *
+                0.001 // Example: changeable value according to screen width
+            : width * 0.0008;
     int crossAxisCount =
         ismobile
             ? 1
@@ -108,26 +117,45 @@ class HealthcareJourneySection extends StatelessWidget {
             alignment: Alignment.center,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: cards.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: crossAxisSpacing,
-                  mainAxisSpacing: mainAxisSpacing,
-                  childAspectRatio: cardAspectRatio,
-                ),
-                itemBuilder: (context, index) {
-                  final card = cards[index];
-                  return _JourneyCard(
-                    imagePath: card['image']!,
-                    title: card['title']!,
-                    description: card['description']!,
-                    imageHeight: cardImageHeight,
-                  );
-                },
-              ),
+              child:
+                  ismobile
+                      ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: cards.length,
+                        itemBuilder: (context, index) {
+                          final card = cards[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 50),
+                            child: _JourneyCard(
+                              imagePath: card['image']!,
+                              title: card['title']!,
+                              description: card['description']!,
+                              imageHeight: cardImageHeight,
+                            ),
+                          );
+                        },
+                      )
+                      : GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: cards.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: crossAxisSpacing,
+                          mainAxisSpacing: mainAxisSpacing,
+                          childAspectRatio: cardAspectRatio,
+                        ),
+                        itemBuilder: (context, index) {
+                          final card = cards[index];
+                          return _JourneyCard(
+                            imagePath: card['image']!,
+                            title: card['title']!,
+                            description: card['description']!,
+                            imageHeight: cardImageHeight,
+                          );
+                        },
+                      ),
             ),
           ),
         ],
@@ -152,6 +180,7 @@ class _JourneyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
