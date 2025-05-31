@@ -5,6 +5,8 @@ import 'package:misdeptapp/views/landing/components/healthcarejourney.dart';
 import 'package:misdeptapp/views/landing/components/healthcaresection.dart';
 import 'package:misdeptapp/views/landing/components/healthregulation.dart';
 import 'package:misdeptapp/views/landing/components/homepage.dart';
+import 'package:misdeptapp/views/landing/components/topbar.dart';
+import 'package:misdeptapp/views/landing/components/topbar2.dart';
 import 'package:misdeptapp/views/login/login_screen.dart';
 
 class Landingpage extends StatelessWidget {
@@ -24,6 +26,7 @@ class Landingpage extends StatelessWidget {
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         actions: [
+          TopNavWithModalMenu(),
           OutlinedButton(
             onPressed: () {
               Get.to(AdminLoginScreen());
