@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:misdeptapp/config/responsive.dart';
+
+class NavMenuItem {
+  final String title;
+  final List<String>? dropdownItems;
+  final VoidCallback? onTap;
+
+  NavMenuItem({required this.title, this.dropdownItems, this.onTap});
+}
 
 class TopNavWithModalMenu extends StatefulWidget {
   const TopNavWithModalMenu({super.key});
@@ -8,8 +17,35 @@ class TopNavWithModalMenu extends StatefulWidget {
 }
 
 class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
-  final List<GlobalKey> navKeys = List.generate(5, (_) => GlobalKey());
+  final List<GlobalKey> navKeys = List.generate(6, (_) => GlobalKey());
   int? activeIndex;
+
+  final List<NavMenuItem> menuItems = [
+    NavMenuItem(
+      title: "Staying healthy",
+      dropdownItems: ["Fitness", "Nutrition", "Mental Health"],
+    ),
+    NavMenuItem(
+      title: "Seeking healthcare",
+      dropdownItems: ["Find a Doctor", "Emergency"],
+    ),
+    NavMenuItem(
+      title: "Ageing well",
+      dropdownItems: ["Mobility", "Memory Care"],
+    ),
+    NavMenuItem(
+      title: "Managing expenses",
+      dropdownItems: ["Insurance", "Bills", "Savings"],
+    ),
+    NavMenuItem(
+      title: "Resources",
+      dropdownItems: ["Help Center", "Contact Us"],
+    ),
+    NavMenuItem(
+      title: "About",
+      onTap: () => debugPrint("Tapped About"), // No dropdown
+    ),
+  ];
 
   void _showDropdownModal(
     BuildContext context,
@@ -17,9 +53,7 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
     Offset offset,
     int index,
   ) {
-    setState(() {
-      activeIndex = index;
-    });
+    setState(() => activeIndex = index);
 
     showGeneralDialog(
       barrierColor: Colors.transparent,
@@ -44,28 +78,26 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
                 elevation: 8,
                 borderRadius: BorderRadius.circular(8),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 250),
+                  constraints: const BoxConstraints(maxWidth: 160),
                   child: ListView(
                     padding: const EdgeInsets.all(8),
                     shrinkWrap: true,
                     children:
-                        items
-                            .map(
-                              (item) => ListTile(
-                                dense: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                hoverColor: Colors.blue[100],
-                                title: Text(item),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  setState(() => activeIndex = null);
-                                  debugPrint("Tapped $item");
-                                },
-                              ),
-                            )
-                            .toList(),
+                        items.map((item) {
+                          return ListTile(
+                            dense: true,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            hoverColor: Colors.blue[100],
+                            title: Text(item),
+                            onTap: () {
+                              Navigator.pop(context);
+                              setState(() => activeIndex = null);
+                              debugPrint("Tapped $item");
+                            },
+                          );
+                        }).toList(),
                   ),
                 ),
               ),
@@ -80,74 +112,38 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
   void _onNavTap(
     BuildContext context,
     GlobalKey key,
-    List<String> items,
+    NavMenuItem item,
     int index,
   ) {
-    final RenderBox renderBox =
-        key.currentContext!.findRenderObject() as RenderBox;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
-    _showDropdownModal(context, items, offset, index);
+    if (item.dropdownItems != null && item.dropdownItems!.isNotEmpty) {
+      final RenderBox renderBox =
+          key.currentContext!.findRenderObject() as RenderBox;
+      final Offset offset = renderBox.localToGlobal(Offset.zero);
+      _showDropdownModal(context, item.dropdownItems!, offset, index);
+    } else {
+      item.onTap?.call();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _NavButton(
-            key: navKeys[0],
-            title: "Staying healthy",
-            isOpen: activeIndex == 0,
-            onTap:
-                () => _onNavTap(context, navKeys[0], [
-                  "Fitness",
-                  "Nutrition",
-                  "Mental Health",
-                ], 0),
-          ),
-          _NavButton(
-            key: navKeys[1],
-            title: "Seeking healthcare",
-            isOpen: activeIndex == 1,
-            onTap:
-                () => _onNavTap(context, navKeys[1], [
-                  "Find a Doctor",
-                  "Emergency",
-                ], 1),
-          ),
-          _NavButton(
-            key: navKeys[2],
-            title: "Ageing well",
-            isOpen: activeIndex == 2,
-            onTap:
-                () => _onNavTap(context, navKeys[2], [
-                  "Mobility",
-                  "Memory Care",
-                ], 2),
-          ),
-          _NavButton(
-            key: navKeys[3],
-            title: "Managing expenses",
-            isOpen: activeIndex == 3,
-            onTap:
-                () => _onNavTap(context, navKeys[3], [
-                  "Insurance",
-                  "Bills",
-                  "Savings",
-                ], 3),
-          ),
-          _NavButton(
-            key: navKeys[4],
-            title: "Resources",
-            isOpen: activeIndex == 4,
-            onTap:
-                () => _onNavTap(context, navKeys[4], [
-                  "Help Center",
-                  "Contact Us",
-                ], 4),
-          ),
-        ],
+        children: List.generate(menuItems.length, (index) {
+          final item = menuItems[index];
+          final hasDropdown =
+              item.dropdownItems != null && item.dropdownItems!.isNotEmpty;
+
+          return _NavButton(
+            key: navKeys[index],
+            title: item.title,
+            isOpen: activeIndex == index,
+            showArrow: hasDropdown,
+            onTap: () => _onNavTap(context, navKeys[index], item, index),
+          );
+        }),
       ),
     );
   }
@@ -156,6 +152,7 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
 class _NavButton extends StatelessWidget {
   final String title;
   final bool isOpen;
+  final bool showArrow;
   final VoidCallback onTap;
 
   const _NavButton({
@@ -163,19 +160,57 @@ class _NavButton extends StatelessWidget {
     required this.title,
     required this.onTap,
     required this.isOpen,
+    this.showArrow = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
-        child: Row(
-          children: [
-            Text(title, style: const TextStyle(fontSize: 14.5)),
-            Icon(isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Responsive.isTabDesk(context)
+                  ? SizedBox(
+                    width: 70,
+                    child: Expanded(
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.visible,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          color: isOpen ? Colors.green : null,
+                          fontWeight:
+                              isOpen ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  )
+                  : Text(
+                    title,
+                    overflow: TextOverflow.visible,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      color: isOpen ? Colors.green : null,
+                      fontWeight: isOpen ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+              if (showArrow)
+                Icon(
+                  isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  size: 18,
+                ),
+            ],
+          ),
         ),
       ),
     );

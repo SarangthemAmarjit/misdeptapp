@@ -17,15 +17,17 @@ class Landingpage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        actionsPadding: EdgeInsets.only(left: 70),
         leading: Padding(
           padding: const EdgeInsets.only(left: 20),
           child: Image.asset('assets/images/logo2.png', fit: BoxFit.contain),
         ),
-        title: const Text(
-          "MIS DEPARTMENT\nMANIPUR",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
+
         actions: [
+          const Text(
+            "MIS DEPARTMENT\nMANIPUR",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
           TopNavWithModalMenu(),
           OutlinedButton(
             onPressed: () {
