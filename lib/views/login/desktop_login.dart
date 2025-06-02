@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:misdeptapp/config/constants.dart';
+import 'package:misdeptapp/views/login/adminpanel2.dart';
 import 'package:misdeptapp/views/login/controller/login_controller.dart';
 
 class Adminlogindesktop extends StatefulWidget {
@@ -261,21 +262,22 @@ class _AdminlogindesktopState extends State<Adminlogindesktop> {
                               // const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: () {
-                                  FocusScope.of(
-                                    context,
-                                  ).requestFocus(FocusNode());
-                                  if (usernameController.text.isEmpty ||
-                                      passwordController.text.isEmpty) {
-                                    controller.showDialog(
-                                      "Error",
-                                      "Username or Password cannot be empty.",
-                                    );
-                                  } else {
-                                    controller.login(
-                                      usernameController.text,
-                                      passwordController.text,
-                                    );
-                                  }
+                                  Get.to(AdminDashboard());
+                                  // FocusScope.of(
+                                  //   context,
+                                  // ).requestFocus(FocusNode());
+                                  // if (usernameController.text.isEmpty ||
+                                  //     passwordController.text.isEmpty) {
+                                  //   controller.showDialog(
+                                  //     "Error",
+                                  //     "Username or Password cannot be empty.",
+                                  //   );
+                                  // } else {
+                                  //   controller.login(
+                                  //     usernameController.text,
+                                  //     passwordController.text,
+                                  //   );
+                                  // }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color.fromARGB(

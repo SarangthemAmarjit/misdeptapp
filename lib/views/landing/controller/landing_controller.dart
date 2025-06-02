@@ -9,8 +9,12 @@ import 'package:misdeptapp/views/landing/components/topbar2.dart';
 class LandingController extends GetxController {
   String _currentpage = 'landing';
   int _selectedmenuindex = 0;
+   int _selectedadminpageindex = 0;
+    String _admincurrentpage = 'dashboard';
   int get selectedmenuindex => _selectedmenuindex;
   String get currentPage => _currentpage;
+  String get admincurrentpage => _admincurrentpage;
+  int get selectedadminpageindex => _selectedadminpageindex;
 
   @override
   void onInit() {
@@ -31,6 +35,13 @@ class LandingController extends GetxController {
     // Your _logic here
     _currentpage = page;
     _selectedmenuindex = ind;
+    update(); // Notify listeners about the change
+  }
+
+   void setadmincurrentpage(String page, int ind) {
+    // Your _logic here
+    _admincurrentpage = page;
+    _selectedadminpageindex = ind;
     update(); // Notify listeners about the change
   }
 }

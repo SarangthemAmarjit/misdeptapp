@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:misdeptapp/views/landing/controller/landing_controller.dart';
+import 'package:misdeptapp/views/login/adminpanel2.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -10,159 +13,241 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-  int _currentIndex = 0;
-  final PageController _pageController = PageController();
+  Future<void> showLogoutDialog(BuildContext context) async {
+    final LandingController landcon = Get.find<LandingController>();
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(13),
+            ),
+            title: const Text('Logout'),
+            content: const Text('Are you sure you want to logout?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                  // landcon.logout();
+                },
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  side: const BorderSide(color: Colors.blue),
+                ),
+                child: const Text(
+                  "Logout",
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ],
+          ),
+    );
+    if (shouldLogout == true) {
+      Get.offAllNamed('/home');
+      landcon.setadmincurrentpage('dashboard', 0);
+    }
+  }
+
+  Widget getPage(String key) {
+    switch (key) {
+      case 'Dashboard':
+        return const DashboardPage();
+      case 'Gallery':
+        return const GalleryPage();
+      case 'Contact Info':
+        return const ContactPage();
+      case 'Landing Page':
+        return const LandingPage();
+      case 'Users':
+        return const UsersPage();
+
+      default:
+        return const DashboardPage();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          // Sidebar
-          Container(
-            width: 280,
-            decoration: const BoxDecoration(
-              color: Color(0xFF141A2D),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                // Logo
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/admin.svg',
-                      height: 36,
-                      placeholderBuilder:
-                          (context) =>
-                              const Icon(Icons.admin_panel_settings, size: 36),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'ADMIN PANEL',
-                      style: GoogleFonts.poppins(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF6C72FF),
-                      ),
+    final LandingController landcon = Get.put(LandingController());
+    return GetBuilder<LandingController>(
+      builder: (_) {
+        return Scaffold(
+          body: Row(
+            children: [
+              // Sidebar
+              Container(
+                width: 280,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF141A2D),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
-                // Navigation items
-                _buildNavItem(0, Icons.dashboard, 'Dashboard'),
-                _buildNavItem(1, Icons.photo_library, 'Gallery'),
-                _buildNavItem(2, Icons.contact_page, 'Contact Info'),
-                _buildNavItem(3, Icons.home, 'Landing Page'),
-                _buildNavItem(4, Icons.people, 'Users'),
-                const Spacer(),
-                // User profile
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1D2335),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Row(
-                    children: [
-                      const CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    // Logo
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/admin.png',
+                          height: 36,
+                          width: 36,
                         ),
-                        radius: 24,
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Admin User',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'ADMIN PANEL',
+                          style: GoogleFonts.poppins(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF6C72FF),
                           ),
-                          Text(
-                            'admin@example.com',
-                            style: GoogleFonts.poppins(
-                              color: Colors.grey,
-                              fontSize: 13,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    // Navigation items
+                    _buildNavItem(0, Icons.dashboard, 'Dashboard'),
+                    _buildNavItem(1, Icons.photo_library, 'Gallery'),
+                    _buildNavItem(2, Icons.contact_page, 'Contact Info'),
+                    _buildNavItem(3, Icons.home, 'Landing Page'),
+                    _buildNavItem(4, Icons.people, 'Users'),
+                    _buildNavItem(5, Icons.logout, 'Logout'),
+                    const Spacer(),
+                    // User profile
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1D2335),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: const Color(0xFF6C72FF).withOpacity(0.2),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
                             ),
+                            radius: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Admin User',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'admin@example.com',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.grey,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              // Main content
+              Expanded(
+                child: getPage(landcon.admincurrentpage),
+
+                // PageView(
+                //   controller: _pageController,
+                //   onPageChanged: (index) {
+                //     setState(() {
+                //       _currentIndex = index;
+                //     });
+                //   },
+                //   children: const [
+                //     DashboardPage(),
+                //     GalleryPage(),
+                //     ContactPage(),
+                //     LandingPage(),
+                //     UsersPage(),
+                //   ],
+                // ),
+              ),
+            ],
           ),
-          // Main content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              children: const [
-                DashboardPage(),
-                GalleryPage(),
-                ContactPage(),
-                LandingPage(),
-                UsersPage(),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildNavItem(int index, IconData icon, String title) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        color:
-            _currentIndex == index
-                ? const Color(0xFF6C72FF)
-                : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: _currentIndex == index ? Colors.white : Colors.grey[400],
-        ),
-        title: Text(
-          title,
-          style: GoogleFonts.poppins(
-            color: _currentIndex == index ? Colors.white : Colors.grey[400],
-            fontWeight: FontWeight.w500,
+    final LandingController landingcon = Get.find<LandingController>();
+    return GetBuilder<LandingController>(
+      builder: (_) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color:
+                landingcon.selectedadminpageindex == index
+                    ? const Color(0xFF6C72FF)
+                    : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
           ),
-        ),
-        onTap: () {
-          setState(() {
-            _currentIndex = index;
-            // _pageController.animateToPage(
-            //   index,
-            //   duration: const Duration(milliseconds: 300),
-            //   curve: Curves.easeInOut,
-            // );
-          });
-        },
-      ),
+          child: ListTile(
+            leading: Icon(
+              icon,
+              color:
+                  landingcon.selectedadminpageindex == index
+                      ? Colors.white
+                      : Colors.grey[400],
+            ),
+            title: Text(
+              title,
+              style: GoogleFonts.poppins(
+                color:
+                    landingcon.selectedadminpageindex == index
+                        ? Colors.white
+                        : Colors.grey[400],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            onTap: () {
+              if (index == 5) {
+                showLogoutDialog(context);
+                return;
+              } else {
+                landingcon.setadmincurrentpage(title, index);
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -293,6 +378,7 @@ class DashboardPage extends StatelessWidget {
   ) {
     return Expanded(
       child: Card(
+        elevation: 10,
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Row(
@@ -411,18 +497,27 @@ class GalleryPage extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.add),
-                label: const Text('Add New Image'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6C72FF),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
+              Material(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 10,
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  label: const Text(
+                    'Add New Image',
+                    style: TextStyle(color: Colors.white),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C72FF),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -534,25 +629,25 @@ class ContactPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: SingleChildScrollView(
-        // 👈 Add this
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Contact Information',
-              style: GoogleFonts.poppins(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Contact Information',
+            style: GoogleFonts.poppins(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Update your site contact details',
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[400]),
-            ),
-            const SizedBox(height: 32),
-            Card(
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Update your site contact details',
+            style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[400]),
+          ),
+          // ...existing code...
+          const SizedBox(height: 32),
+          Expanded(
+            child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -565,61 +660,77 @@ class ContactPage extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 24),
-                        _buildContactField('Company Name', 'Acme Corporation'),
-                        _buildContactField('Email Address', 'contact@acme.com'),
-                        _buildContactField('Phone Number', '+1 (555) 123-4567'),
-                        _buildContactField(
-                          'Address',
-                          '123 Business Ave, Suite 100',
-                        ),
-                        _buildContactField('City', 'New York'),
-                        _buildContactField('Country', 'United States'),
-                        const SizedBox(height: 32),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                    const SizedBox(height: 24),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
-                            OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 32,
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text('Cancel'),
+                            _buildContactField(
+                              'Company Name',
+                              'Acme Corporation',
                             ),
-                            const SizedBox(width: 16),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF6C72FF),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 32,
-                                  vertical: 16,
+                            _buildContactField(
+                              'Email Address',
+                              'contact@acme.com',
+                            ),
+                            _buildContactField(
+                              'Phone Number',
+                              '+1 (555) 123-4567',
+                            ),
+                            _buildContactField(
+                              'Address',
+                              '123 Business Ave, Suite 100',
+                            ),
+                            _buildContactField('City', 'New York'),
+                            _buildContactField('Country', 'United States'),
+                            const SizedBox(height: 32),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 32,
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text('Cancel'),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                const SizedBox(width: 16),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6C72FF),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 32,
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Save Changes',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
-                              ),
-                              child: const Text('Save Changes'),
+                              ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          // ...existing code...
+        ],
       ),
     );
   }
@@ -632,14 +743,17 @@ class ContactPage extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.poppins(color: Colors.grey[400], fontSize: 14),
+            style: GoogleFonts.poppins(
+              color: const Color.fromARGB(255, 203, 202, 202),
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 8),
           TextFormField(
             initialValue: value,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0xFF1D2335).withOpacity(0.5),
+              fillColor: const Color(0xFF1D2335).withOpacity(0.2),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -786,8 +900,11 @@ class UsersPage extends StatelessWidget {
               ),
               ElevatedButton.icon(
                 onPressed: () {},
-                icon: const Icon(Icons.person_add),
-                label: const Text('Add New User'),
+                icon: const Icon(Icons.person_add, color: Colors.white),
+                label: const Text(
+                  'Add New User',
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6C72FF),
                   padding: const EdgeInsets.symmetric(
