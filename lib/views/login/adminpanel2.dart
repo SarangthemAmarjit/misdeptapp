@@ -155,11 +155,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
         onTap: () {
           setState(() {
             _currentIndex = index;
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
+            // _pageController.animateToPage(
+            //   index,
+            //   duration: const Duration(milliseconds: 300),
+            //   curve: Curves.easeInOut,
+            // );
           });
         },
       ),
@@ -534,41 +534,38 @@ class ContactPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Contact Information',
-            style: GoogleFonts.poppins(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
+      child: SingleChildScrollView(
+        // 👈 Add this
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Contact Information',
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Update your site contact details',
-            style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[400]),
-          ),
-          const SizedBox(height: 32),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
+            const SizedBox(height: 16),
+            Text(
+              'Update your site contact details',
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[400]),
+            ),
+            const SizedBox(height: 32),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       'Contact Details',
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
+                    Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 24),
@@ -617,12 +614,12 @@ class ContactPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
