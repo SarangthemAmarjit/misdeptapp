@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:misdeptapp/config/constants.dart';
+import 'package:misdeptapp/core/services/api_service.dart';
+import 'package:misdeptapp/views/login/adminpanel2.dart';
 
 class LoginController extends GetxController {
   // final AuthRepoImpl authenticationRepo = AuthRepoImpl();
@@ -20,6 +24,41 @@ class LoginController extends GetxController {
 
   void setpasswordvisibility() {
     isObscured.value = !isObscured.value;
+  }
+
+  var isLoading = false.obs;
+  var isLoggedIn = false.obs;
+
+  // Example login method
+  Future<bool> login(String username, String password) async {
+    isLoading.value = true;
+    try {
+      // Simulate API call
+
+      var response = await ApiService(baseUrl: api).post(
+        '/api/Accounts/login',
+        headers: {'Content-Type': 'application/json'},
+        body: {'userName': username, 'password': password},
+      );
+
+      log(response.toString());
+
+      // Replace with real authentication logic
+      if (response.statusCode == 200) {
+        isLoggedIn.value = true;
+        Get.to(AdminDashboard());
+        return true;
+      } else {
+        isLoggedIn.value = false;
+        return false;
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void logout() {
+    isLoggedIn.value = false;
   }
 
   // void logout() async {

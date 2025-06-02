@@ -16,8 +16,9 @@ class Landingpagemobile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
-        
-        child: Sidebar()),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
+        child: Sidebar(),
+      ),
       backgroundColor: Colors.white,
       appBar: AppBar(
         // leading: Padding(

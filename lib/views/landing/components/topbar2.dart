@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:misdeptapp/config/constants.dart';
 import 'package:misdeptapp/config/responsive.dart';
+import 'package:misdeptapp/views/landing/controller/landing_controller.dart';
 
 class NavMenuItem {
   final String title;
@@ -20,33 +23,6 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
   final List<GlobalKey> navKeys = List.generate(6, (_) => GlobalKey());
   int? activeIndex;
 
-  final List<NavMenuItem> menuItems = [
-    NavMenuItem(
-      title: "Staying healthy",
-      dropdownItems: ["Fitness", "Nutrition", "Mental Health"],
-    ),
-    NavMenuItem(
-      title: "Seeking healthcare",
-      dropdownItems: ["Find a Doctor", "Emergency"],
-    ),
-    NavMenuItem(
-      title: "Ageing well",
-      dropdownItems: ["Mobility", "Memory Care"],
-    ),
-    NavMenuItem(
-      title: "Managing expenses",
-      dropdownItems: ["Insurance", "Bills", "Savings"],
-    ),
-    NavMenuItem(
-      title: "Resources",
-      dropdownItems: ["Help Center", "Contact Us"],
-    ),
-    NavMenuItem(
-      title: "About",
-      onTap: () => debugPrint("Tapped About"), // No dropdown
-    ),
-  ];
-
   void _showDropdownModal(
     BuildContext context,
     List<String> items,
@@ -62,47 +38,52 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
       barrierLabel: "Dismiss",
       pageBuilder: (_, __, ___) => const SizedBox.shrink(),
       transitionBuilder: (context, anim1, anim2, child) {
-        return Stack(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-                setState(() => activeIndex = null);
-              },
-              child: Container(color: Colors.transparent),
-            ),
-            Positioned(
-              left: offset.dx,
-              top: offset.dy + 48,
-              child: Material(
-                elevation: 8,
-                borderRadius: BorderRadius.circular(8),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 160),
-                  child: ListView(
-                    padding: const EdgeInsets.all(8),
-                    shrinkWrap: true,
-                    children:
-                        items.map((item) {
-                          return ListTile(
-                            dense: true,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            hoverColor: Colors.blue[100],
-                            title: Text(item),
-                            onTap: () {
-                              Navigator.pop(context);
-                              setState(() => activeIndex = null);
-                              debugPrint("Tapped $item");
-                            },
-                          );
-                        }).toList(),
+        return GetBuilder<LandingController>(
+          builder: (landcon) {
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() => activeIndex = null);
+                  },
+                  child: Container(color: Colors.transparent),
+                ),
+                Positioned(
+                  left: offset.dx,
+                  top: offset.dy + 48,
+                  child: Material(
+                    elevation: 8,
+                    borderRadius: BorderRadius.circular(8),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 160),
+                      child: ListView(
+                        padding: const EdgeInsets.all(8),
+                        shrinkWrap: true,
+                        children:
+                            items.map((item) {
+                              return ListTile(
+                                dense: true,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                hoverColor: Colors.blue[100],
+                                title: Text(item),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  setState(() => activeIndex = null);
+                                  debugPrint("Tapped $item");
+                                  landcon.setcurrentpage(item, index);
+                                },
+                              );
+                            }).toList(),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
       transitionDuration: const Duration(milliseconds: 200),
