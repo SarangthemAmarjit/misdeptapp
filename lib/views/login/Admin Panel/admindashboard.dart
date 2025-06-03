@@ -96,7 +96,7 @@ class DashboardPage extends StatelessWidget {
                                         color: admincon.getcolorforrecentactivity(title: act.activity, remark: act.remark),
                                       ),
                                     )
-                                    .toList(),
+                                    .toList().reversed.toList(),
 
                             // [
                             //   ActivityItem(

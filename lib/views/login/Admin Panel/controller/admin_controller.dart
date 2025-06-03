@@ -76,37 +76,37 @@ class AdminController extends GetxController {
     update();
   }
 
- IconData geticonforrecentactivity({required String title,required String remark}){
-
-if(title=='create'&&remark=='Added new gallery image'){
-  return Icons.add_a_photo;
-}else if(title=='create'&&remark=='Added new notification')
-{
-return Icons.notifications;
-}else if(title=='update'){
-  return Icons.edit;
-}else{
-  return Icons.delete;
-}
+  IconData geticonforrecentactivity({
+    required String title,
+    required String remark,
+  }) {
+    if (title == 'create' && remark == 'Added new gallery image') {
+      return Icons.add_a_photo;
+    } else if (title == 'create' && remark == 'Added new notification') {
+      return Icons.notifications;
+    } else if (title == 'update') {
+      return Icons.edit;
+    } else {
+      return Icons.delete;
+    }
   }
 
-   Color getcolorforrecentactivity({required String title,required String remark}){
-
-if(title=='create'&&remark=='Added new gallery image'){
-  return Color(0xFF6C72FF);
-}else if(title=='create'&&remark=='Added new notification')
-{
-return Color(0xFFFF9800);
-}else if(title=='update'){
-  return Color(0xFF4CAF50);
-}else{
-  return Color(0xFFF44336);
-}
+  Color getcolorforrecentactivity({
+    required String title,
+    required String remark,
+  }) {
+    if (title == 'create' && remark == 'Added new gallery image') {
+      return Color(0xFF6C72FF);
+    } else if (title == 'create' && remark == 'Added new notification') {
+      return Color(0xFFFF9800);
+    } else if (title == 'update') {
+      return Color(0xFF4CAF50);
+    } else {
+      return Color(0xFFF44336);
+    }
   }
 
   String getTimeAgo(DateTime createdAt) {
-  return timeago.format(createdAt);
-}
-
-
+    return timeago.format(createdAt);
+  }
 }
