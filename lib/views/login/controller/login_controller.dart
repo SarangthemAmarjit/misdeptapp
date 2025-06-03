@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:misdeptapp/config/constants.dart';
 import 'package:misdeptapp/core/services/api_service.dart';
-import 'package:misdeptapp/views/login/adminpanel2.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/adminmain.dart';
+
 
 class LoginController extends GetxController {
   // final AuthRepoImpl authenticationRepo = AuthRepoImpl();
@@ -46,7 +47,7 @@ class LoginController extends GetxController {
       // Replace with real authentication logic
       if (response.statusCode == 200) {
         isLoggedIn.value = true;
-        Get.to(AdminDashboard());
+        Get.to(AdminMainPage());
         return true;
       } else {
         isLoggedIn.value = false;

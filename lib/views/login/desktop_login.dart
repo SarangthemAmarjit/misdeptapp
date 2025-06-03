@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:misdeptapp/config/constants.dart';
-import 'package:misdeptapp/views/login/adminpanel2.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/adminmain.dart';
+
 import 'package:misdeptapp/views/login/controller/login_controller.dart';
 
 class Adminlogindesktop extends StatefulWidget {
@@ -262,7 +263,7 @@ class _AdminlogindesktopState extends State<Adminlogindesktop> {
                               // const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: () {
-                                  Get.to(AdminDashboard());
+                                  Get.to(AdminMainPage());
                                   // FocusScope.of(
                                   //   context,
                                   // ).requestFocus(FocusNode());
