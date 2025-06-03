@@ -4,6 +4,8 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/controller/admin_controller.dart';
 
+
+
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
@@ -59,7 +61,7 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(width: 24),
                   _buildStatCard(
                     'Last Updated',
-                    'Today',
+                    admincon.getTimeAgo(admincon.allactivity.last.date),
                     Icons.update,
                     const Color(0xFFF44336),
                   ),
@@ -89,9 +91,9 @@ class DashboardPage extends StatelessWidget {
                                     .map(
                                       (act) => ActivityItem(
                                         title: act.remark,
-                                        subtitle: 'Just now',
-                                        icon: null,
-                                        color: null,
+                                        subtitle: admincon.getTimeAgo(act.date),
+                                        icon: admincon.geticonforrecentactivity(title: act.activity, remark: act.remark) ,
+                                        color: admincon.getcolorforrecentactivity(title: act.activity, remark: act.remark),
                                       ),
                                     )
                                     .toList(),

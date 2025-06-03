@@ -44,6 +44,7 @@ dependencies:
   intl: ^0.20.2
   file_picker: ^10.1.9
   open_file: ^3.5.10
+  timeago: ^3.7.1
  
 
 dev_dependencies:
