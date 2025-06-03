@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/notificationitemmodel.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/widget/pdfupload.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -150,6 +151,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
           // Create notification form
           if (_showCreateForm) ...[
             Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: Colors.black.withOpacity(0.1)),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Form(
@@ -170,6 +175,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       TextFormField(
                         decoration: InputDecoration(
                           labelText: 'Title',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -185,163 +193,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Message field
-                      TextFormField(
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: 'Message',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.message),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a message';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => _message = value!,
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Audience and Type
-                      Row(
-                        children: [
-                          // Audience
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              value: _audience,
-                              decoration: InputDecoration(
-                                labelText: 'Audience',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                prefixIcon: const Icon(Icons.people),
-                              ),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'All Users',
-                                  child: Text('All Users'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Premium Users',
-                                  child: Text('Premium Users'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Free Users',
-                                  child: Text('Free Users'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'New Users',
-                                  child: Text('New Users'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Specific Users',
-                                  child: Text('Specific Users'),
-                                ),
-                              ],
-                              onChanged:
-                                  (value) => setState(() => _audience = value!),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-
-                          // Notification Type
-                          Expanded(
-                            child: DropdownButtonFormField<NotificationType>(
-                              value: _type,
-                              decoration: InputDecoration(
-                                labelText: 'Notification Type',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                prefixIcon: const Icon(Icons.category),
-                              ),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: NotificationType.announcement,
-                                  child: Text('Announcement'),
-                                ),
-                                DropdownMenuItem(
-                                  value: NotificationType.alert,
-                                  child: Text('Alert'),
-                                ),
-                                DropdownMenuItem(
-                                  value: NotificationType.promotion,
-                                  child: Text('Promotion'),
-                                ),
-                                DropdownMenuItem(
-                                  value: NotificationType.update,
-                                  child: Text('Update'),
-                                ),
-                                DropdownMenuItem(
-                                  value: NotificationType.welcome,
-                                  child: Text('Welcome'),
-                                ),
-                              ],
-                              onChanged:
-                                  (value) => setState(() => _type = value!),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Schedule options
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              leading: const Icon(Icons.calendar_today),
-                              title: Text(
-                                _scheduleDate == null
-                                    ? 'Select Schedule Date'
-                                    : 'Date: ${_scheduleDate!.toLocal().toString().split(' ')[0]}',
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.date_range),
-                                onPressed: () async {
-                                  final DateTime? picked = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime(2025),
-                                  );
-                                  if (picked != null) {
-                                    setState(() => _scheduleDate = picked);
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: ListTile(
-                              leading: const Icon(Icons.access_time),
-                              title: Text(
-                                _scheduleTime == null
-                                    ? 'Select Schedule Time'
-                                    : 'Time: ${_scheduleTime!.format(context)}',
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.schedule),
-                                onPressed: () async {
-                                  final TimeOfDay? picked =
-                                      await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.now(),
-                                      );
-                                  if (picked != null) {
-                                    setState(() => _scheduleTime = picked);
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
+                      PdfUploadWidget(),
 
                       // Action buttons
                       Row(
@@ -362,48 +214,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text('Cancel'),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                           const SizedBox(width: 16),
-                          ElevatedButton(
+                          OutlinedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
                                 // Create notification logic would go here
-                                setState(() {
-                                  _notifications.insert(
-                                    0,
-                                    NotificationItem(
-                                      id:
-                                          DateTime.now().millisecondsSinceEpoch
-                                              .toString(),
-                                      title: _title,
-                                      message: _message,
-                                      date:
-                                          _scheduleDate
-                                              ?.toLocal()
-                                              .toString()
-                                              .split(' ')[0] ??
-                                          'Now',
-                                      time:
-                                          _scheduleTime?.format(context) ??
-                                          'Immediately',
-                                      status:
-                                          _scheduleDate != null
-                                              ? NotificationStatus.scheduled
-                                              : NotificationStatus.draft,
-                                      audience: _audience,
-                                      type: _type,
-                                    ),
-                                  );
-                                  _showCreateForm = false;
-                                  _title = '';
-                                  _message = '';
-                                  _audience = 'All Users';
-                                  _type = NotificationType.announcement;
-                                  _scheduleDate = null;
-                                  _scheduleTime = null;
-                                });
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
@@ -414,15 +236,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 );
                               }
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6C72FF),
+                            style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
-                                vertical: 16,
+                                horizontal: 15,
+                                vertical: 17,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
+                              side: const BorderSide(color: Colors.blue),
                             ),
                             child: const Text('Create Notification'),
                           ),
@@ -511,47 +333,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    'TYPE',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'AUDIENCE',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'STATUS',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'DATE & TIME',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 100),
               ],
             ),
           ),
@@ -591,128 +372,31 @@ class _NotificationsPageState extends State<NotificationsPage> {
             ),
           ),
           content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  initialValue: notification.title,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+            child: SizedBox(
+              width: 400,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    initialValue: notification.title,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
 
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    labelText: 'Title',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  initialValue: notification.message,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    labelText: 'Message',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: notification.audience,
-                        decoration: InputDecoration(
-                          labelText: 'Audience',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'All Users',
-                            child: Text('All Users'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Premium Users',
-                            child: Text('Premium Users'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Free Users',
-                            child: Text('Free Users'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'New Users',
-                            child: Text('New Users'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Specific Users',
-                            child: Text('Specific Users'),
-                          ),
-                        ],
-                        onChanged: (value) {},
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: DropdownButtonFormField<NotificationType>(
-                        value: notification.type,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          labelText: 'Type',
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                            value: NotificationType.announcement,
-                            child: Text('Announcement'),
-                          ),
-                          DropdownMenuItem(
-                            value: NotificationType.alert,
-                            child: Text('Alert'),
-                          ),
-                          DropdownMenuItem(
-                            value: NotificationType.promotion,
-                            child: Text('Promotion'),
-                          ),
-                          DropdownMenuItem(
-                            value: NotificationType.update,
-                            child: Text('Update'),
-                          ),
-                          DropdownMenuItem(
-                            value: NotificationType.welcome,
-                            child: Text('Welcome'),
-                          ),
-                        ],
-                        onChanged: (value) {},
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 16),
+                  PdfUploadWidget(),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -851,95 +535,20 @@ class NotificationCard extends StatelessWidget {
             // Title and message
             Expanded(
               flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notification.title,
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    notification.message,
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey[400],
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-
-            // Type
-            Expanded(
-              child: Chip(
-                label: Text(
-                  notification.type.toString().split('.').last,
-                  style: TextStyle(
-                    color: _getNotificationColor(notification.type),
-                  ),
+              child: Text(
+                notification.title,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
                 ),
-                backgroundColor: _getNotificationColor(
-                  notification.type,
-                ).withOpacity(0.1),
               ),
             ),
 
             // Audience
-            Expanded(
-              child: Text(notification.audience, style: GoogleFonts.poppins()),
-            ),
-
-            // Status
-            Expanded(
-              child: Chip(
-                label: Text(
-                  notification.status.toString().split('.').last,
-                  style: TextStyle(color: _getStatusColor(notification.status)),
-                ),
-                backgroundColor: _getStatusColor(
-                  notification.status,
-                ).withOpacity(0.1),
-              ),
-            ),
-
-            // Date and time
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notification.date,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    notification.time,
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey[400],
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
             // Action buttons
             Row(
               children: [
-                if (notification.status == NotificationStatus.draft) ...[
-                  IconButton(
-                    onPressed: onSend,
-                    icon: const Icon(Icons.send),
-                    tooltip: 'Send Now',
-                    color: Colors.green,
-                  ),
-                  const SizedBox(width: 8),
-                ],
                 IconButton(
                   onPressed: onEdit,
                   icon: const Icon(Icons.edit),

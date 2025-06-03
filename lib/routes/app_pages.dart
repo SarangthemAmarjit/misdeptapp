@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/adminmain.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/controller/admin_controller.dart';
 import '../views/landing/home_screen.dart';
 import '../views/landing/controller/landing_controller.dart';
 import '../views/login/login_screen.dart';
@@ -16,6 +18,12 @@ class AppPages {
       name: AppRoutes.login,
       page: () => const AdminLoginScreen(),
       binding: BindingsBuilder(() => Get.lazyPut(() => LoginController())),
+    ),
+
+    GetPage(
+      name: AppRoutes.admindashboard,
+      page: () => const AdminMainPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => AdminController())),
     ),
   ];
 }
