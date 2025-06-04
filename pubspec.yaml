@@ -45,6 +45,8 @@ dependencies:
   file_picker: ^10.1.9
   open_file: ^3.5.10
   timeago: ^3.7.1
+  image_picker: ^1.1.2
+  dropdown_button2: ^2.3.9
  
 
 dev_dependencies:

@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:misdeptapp/config/constants.dart';
@@ -9,6 +11,14 @@ import 'package:misdeptapp/views/login/Admin%20Panel/model/gallerymodel.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/notificationmodel.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/usersmodel.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'dart:io';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 
 class AdminController extends GetxController {
   List<UserModel> _allusers = [];
@@ -108,5 +118,300 @@ class AdminController extends GetxController {
 
   String getTimeAgo(DateTime createdAt) {
     return timeago.format(createdAt);
+  }
+
+  void showAddGalleryDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+    DateTime selectedDate = DateTime.now();
+
+    // Add these variables to your dialog state
+    Uint8List? selectedImageBytes; // For web
+   
+    String? selectedImageName;
+
+    // Gallery categories
+    final List<String> galleryCategories = [
+      'Festival',
+      'Office Works',
+      'Events',
+      'Celebrations',
+      'Projects',
+      'Team Activities',
+    ];
+    String? selectedCategory;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            pickImage(BuildContext context) async {
+              try {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.image,
+                  allowMultiple: false,
+                );
+
+                if (result != null && result.files.isNotEmpty) {
+                  PlatformFile file = result.files.first;
+
+                  // For web, we can use bytes directly
+              setState(() {
+              selectedImageBytes = file.bytes;
+                    selectedImageName = file.name;  
+              });
+                    
+                   
+                  
+                  // For mobile/desktop, use the path
+                 
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Failed to pick image: ${e.toString()}"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+
+            void submitForm() {
+              if (formKey.currentState!.validate()) {
+                if (selectedImageBytes == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select an image')),
+                  );
+                  return;
+                }
+
+                if (selectedCategory == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select a category')),
+                  );
+                  return;
+                }
+
+                // Create gallery item object
+                final galleryItem = {
+                  "Title": titleController.text,
+                  "Date": DateFormat(
+                    'yyyy-MM-ddTHH:mm:ss',
+                  ).format(selectedDate),
+                  "Description": descriptionController.text,
+                  "Category": selectedCategory,
+                  "ImageFile": selectedImageBytes,
+                };
+
+                print('Submitting: $galleryItem');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '"${titleController.text}" added to $selectedCategory',
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Add New Gallery Image',
+                style: GoogleFonts.poppins(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: SizedBox(
+                  width: 400,
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Image Upload Section
+                        InkWell(
+                          onTap: () => pickImage(context),
+                          child: Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child:
+                                selectedImageBytes == null
+                                    ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add_photo_alternate,
+                                          size: 40,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Tap to select image',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
+                                    )
+                                    : Image.memory(
+                                      selectedImageBytes!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Center(
+                                          child: Text('Could not load image'),
+                                        );
+                                      },
+                                    ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+
+                        // Gallery Category Dropdown
+                        DropdownButtonFormField2<String>(
+                          value: selectedCategory,
+                          decoration: InputDecoration(
+                            labelText: 'Gallery Category',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: Icon(Icons.category),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Category',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          iconStyleData: IconStyleData(
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                          ),
+                          buttonStyleData: ButtonStyleData(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            height: 50,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            maxHeight: 200,
+                          ),
+                          items:
+                              galleryCategories.map((String category) {
+                                return DropdownMenuItem<String>(
+                                  value: category,
+                                  child: Text(
+                                    category,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                );
+                              }).toList(),
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Please select a category';
+                            }
+                            return null;
+                          },
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCategory = newValue;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 16),
+
+                        // Title Field
+                        TextFormField(
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            labelText: 'Title',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: Icon(Icons.title),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16),
+
+                        // Description Field
+                        TextFormField(
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            labelText: 'Description',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: Icon(Icons.description),
+                          ),
+                          maxLines: 3,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                OutlinedButton(
+                  onPressed: submitForm,
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 15,
+                    ),
+                    side: const BorderSide(color: Colors.blue),
+                  ),
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

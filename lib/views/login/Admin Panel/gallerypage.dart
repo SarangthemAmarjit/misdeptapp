@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/controller/admin_controller.dart';
 import 'package:shimmer/shimmer.dart';
 
 class GalleryPage extends StatelessWidget {
@@ -10,6 +12,7 @@ class GalleryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AdminController admincon = Get.put(AdminController());
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -27,8 +30,7 @@ class GalleryPage extends StatelessWidget {
               ),
               OutlinedButton(
                 onPressed: () {
-                  // Navigator.of(context).pop(true);
-                  // landcon.logout();
+                  admincon.showAddGalleryDialog(context);
                 },
                 style: OutlinedButton.styleFrom(
                   shape: RoundedRectangleBorder(
