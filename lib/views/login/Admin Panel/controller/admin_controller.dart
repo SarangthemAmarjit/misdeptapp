@@ -1,15 +1,18 @@
 import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:misdeptapp/config/constants.dart';
 import 'package:misdeptapp/core/services/api_service.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/activitymodel.dart';
+import 'package:misdeptapp/views/login/Admin%20Panel/model/gallerycover.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/gallerymodel.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/notificationmodel.dart';
 import 'package:misdeptapp/views/login/Admin%20Panel/model/usersmodel.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,6 +30,12 @@ class AdminController extends GetxController {
   List<GalleryModel> _allgallery = [];
   List<GalleryModel> get allgallery => _allgallery;
 
+  List<GalleryCovermodel> _allgallerycover = [];
+  List<GalleryCovermodel> get allgallerycover => _allgallerycover;
+
+  GalleryCovermodel? _selectedgallerycover;
+  GalleryCovermodel? get selectedgalleycover => _selectedgallerycover;
+
   List<NotificationModel> _allnotification = [];
   List<NotificationModel> get allnotification => _allnotification;
 
@@ -38,6 +47,7 @@ class AdminController extends GetxController {
     getallgallery();
     getallnotification();
     getallrecentactivity();
+    getallgallerycover();
   }
 
   void getallusers() async {
@@ -60,6 +70,30 @@ class AdminController extends GetxController {
     var data = galleryModelFromJson(response.body);
 
     _allgallery = data;
+    update();
+  }
+
+  void getallgallerycover() async {
+    var response = await ApiService(
+      baseUrl: api,
+    ).get('/api/GalleryCovers', headers: {'Content-Type': 'application/json'});
+
+    var data = galleryCovermodelFromJson(response.body);
+
+    _allgallerycover = data;
+    update();
+  }
+
+  void updategallerycover({required int id}) async {
+    var response = await ApiService(baseUrl: api).put(
+      '/api/GalleryCovers/$id',
+      headers: {'Content-Type': 'application/json'},
+      body: {},
+    );
+
+    var data = galleryCovermodelFromJson(response.body);
+
+    _allgallerycover = data;
     update();
   }
 
@@ -120,6 +154,331 @@ class AdminController extends GetxController {
     return timeago.format(createdAt);
   }
 
+  resetsetselectedgallerycover() {
+    _selectedgallerycover = null;
+    update();
+  }
+
+  setselectedgallerycover({required int id, required BuildContext context}) {
+    _selectedgallerycover = _allgallerycover.firstWhere((gal) => gal.id == id);
+    update();
+    showAddGalleryCoverDialog(context);
+  }
+
+  void showAddGalleryCoverDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+    DateTime selectedDate = DateTime.now();
+
+    // Add these variables to your dialog state
+    Uint8List? selectedImageBytes; // For web
+
+    String? selectedImageName;
+    DateTime _selectedDate = DateTime.now();
+
+    String? selectedCategory;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        if (_selectedgallerycover != null) {
+          titleController.text = _selectedgallerycover!.title;
+          _selectedDate = _selectedgallerycover!.eventDate;
+        }
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            pickImage(BuildContext context) async {
+              try {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.image,
+                  allowMultiple: false,
+                );
+
+                if (result != null && result.files.isNotEmpty) {
+                  PlatformFile file = result.files.first;
+
+                  // For web, we can use bytes directly
+                  setState(() {
+                    selectedImageBytes = file.bytes;
+                    selectedImageName = file.name;
+                  });
+
+                  // For mobile/desktop, use the path
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Failed to pick image: ${e.toString()}"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+
+            Future<void> _selectDate() async {
+              final pickedDate = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
+              if (pickedDate != null && pickedDate != _selectedDate) {
+                setState(() {
+                  _selectedDate = pickedDate;
+                });
+              }
+            }
+
+            void submitForm() {
+              if (formKey.currentState!.validate()) {
+                if (selectedImageBytes == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select an image')),
+                  );
+                  return;
+                }
+
+                if (selectedCategory == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select a category')),
+                  );
+                  return;
+                }
+
+                // Create gallery item object
+                final galleryItem = {
+                  "Title": titleController.text,
+                  "Date": DateFormat(
+                    'yyyy-MM-ddTHH:mm:ss',
+                  ).format(selectedDate),
+                  "Description": descriptionController.text,
+                  "Category": selectedCategory,
+                  "ImageFile": selectedImageBytes,
+                };
+
+                print('Submitting: $galleryItem');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '"${titleController.text}" added to $selectedCategory',
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: Text(
+                _selectedgallerycover != null
+                    ? 'Update Gallery Cover'
+                    : 'Add New Gallery Cover',
+                style: GoogleFonts.poppins(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: SizedBox(
+                  width: 350,
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Image Upload Section
+                        InkWell(
+                          onTap: () => pickImage(context),
+                          child: Container(
+                            width: double.maxFinite,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child:
+                                selectedImageBytes == null &&
+                                        _selectedgallerycover == null
+                                    ? Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add_photo_alternate,
+                                            size: 40,
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'Tap to select image',
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                    : _selectedgallerycover != null &&
+                                        selectedImageBytes == null
+                                    ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            '${api + _selectedgallerycover!.imageCoverPath}',
+
+                                        fit: BoxFit.cover,
+                                        placeholder:
+                                            (context, url) =>
+                                                Shimmer.fromColors(
+                                                  baseColor:
+                                                      Colors.grey.shade300,
+                                                  highlightColor:
+                                                      Colors.grey.shade100,
+                                                  child: Container(
+                                                    height: 140,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                        errorWidget: (context, url, error) {
+                                          log(error.toString());
+                                          return Container(
+                                            height: 140,
+                                            color: Colors.white,
+                                            child: const Center(
+                                              child: Icon(
+                                                Icons.broken_image,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                    : _selectedgallerycover != null &&
+                                        selectedImageBytes != null
+                                    ? Image.memory(
+                                      selectedImageBytes!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Center(
+                                          child: Text('Could not load image'),
+                                        );
+                                      },
+                                    )
+                                    : Image.memory(
+                                      selectedImageBytes!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Center(
+                                          child: Text('Could not load image'),
+                                        );
+                                      },
+                                    ),
+                          ),
+                        ),
+
+                        SizedBox(height: 16),
+
+                        // Title Field
+                        TextFormField(
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            labelText: 'Title',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: Icon(Icons.title),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16),
+
+                        // Description Field
+                        InkWell(
+                          onTap: _selectDate,
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Date',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              prefixIcon: Icon(Icons.calendar_today),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(DateFormat.yMMMMd().format(_selectedDate)),
+                                Icon(Icons.arrow_drop_down),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                OutlinedButton(
+                  onPressed: submitForm,
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 15,
+                    ),
+                    side: const BorderSide(color: Colors.blue),
+                  ),
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void showAddGalleryDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     final titleController = TextEditingController();
@@ -128,7 +487,7 @@ class AdminController extends GetxController {
 
     // Add these variables to your dialog state
     Uint8List? selectedImageBytes; // For web
-   
+
     String? selectedImageName;
 
     // Gallery categories
@@ -158,15 +517,12 @@ class AdminController extends GetxController {
                   PlatformFile file = result.files.first;
 
                   // For web, we can use bytes directly
-              setState(() {
-              selectedImageBytes = file.bytes;
-                    selectedImageName = file.name;  
-              });
-                    
-                   
-                  
+                  setState(() {
+                    selectedImageBytes = file.bytes;
+                    selectedImageName = file.name;
+                  });
+
                   // For mobile/desktop, use the path
-                 
                 }
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
