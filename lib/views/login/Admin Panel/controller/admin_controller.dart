@@ -27,8 +27,14 @@ class AdminController extends GetxController {
   List<UserModel> _allusers = [];
   List<UserModel> get allusers => _allusers;
 
+  bool _isgalleryimagepage = false;
+bool get isgalleryimagepage =>_isgalleryimagepage;
+
   List<GalleryModel> _allgallery = [];
   List<GalleryModel> get allgallery => _allgallery;
+
+   List<GalleryModel> _allgalleryforspecificgallerycover = [];
+  List<GalleryModel> get allgalleryforspecificgallerycover => _allgalleryforspecificgallerycover;
 
   List<GalleryCovermodel> _allgallerycover = [];
   List<GalleryCovermodel> get allgallerycover => _allgallerycover;
@@ -49,6 +55,11 @@ class AdminController extends GetxController {
     getallrecentactivity();
     getallgallerycover();
   }
+settogetspecificcoverimages({required int gcid}){
+_allgalleryforspecificgallerycover = _allgallery.where((ga)=>ga.gcid==gcid).toList();
+_isgalleryimagepage = true;
+update();
+}
 
   void getallusers() async {
     var response = await ApiService(

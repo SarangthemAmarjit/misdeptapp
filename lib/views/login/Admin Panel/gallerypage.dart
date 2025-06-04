@@ -70,18 +70,79 @@ class GalleryPage extends StatelessWidget {
               const SizedBox(height: 32),
               // Gallery grid
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: admincon.allgallerycover.length,
-                  itemBuilder: (context, index) {
-                    return GalleryItemCard(index: index);
-                  },
-                ),
+                child:
+                    admincon.isgalleryimagepage
+                        ? admincon.allgalleryforspecificgallerycover.isEmpty
+                            ? SizedBox(
+                              height: 400,
+                              child: Center(
+                                child: Text(
+                                  'No Gallery Images Found',
+                                  style: TextStyle(fontSize: 25),
+                                ),
+                              ),
+                            )
+                            : GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 4,
+                                    crossAxisSpacing: 16,
+                                    mainAxisSpacing: 16,
+                                    childAspectRatio: 0.8,
+                                  ),
+                              itemCount:
+                                  admincon
+                                      .allgalleryforspecificgallerycover
+                                      .length,
+                              itemBuilder: (context, index) {
+                                return GalleryItemCard(
+                                  imageUrl:
+                                      admincon
+                                          .allgallerycover[index]
+                                          .imageCoverPath,
+                                  title: admincon.allgallerycover[index].title,
+                                  onEdit: () {
+                                    admincon.setselectedgallerycover(
+                                      id: admincon.allgallerycover[index].id,
+                                      context: context,
+                                    );
+                                  },
+                                  onDelete: () {},
+                                  onImagetap: () {
+                                    admincon.settogetspecificcoverimages(
+                                      gcid: admincon.allgallerycover[index].id,
+                                    );
+                                  },
+                                );
+                              },
+                            )
+                        : GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 0.8,
+                              ),
+                          itemCount: admincon.allgallerycover.length,
+                          itemBuilder: (context, index) {
+                            return GalleryItemCard(
+                              imageUrl:
+                                  admincon
+                                      .allgallerycover[index]
+                                      .imageCoverPath,
+                              title: admincon.allgallerycover[index].title,
+                              onEdit: () {
+                                admincon.setselectedgallerycover(
+                                  id: admincon.allgallerycover[index].id,
+                                  context: context,
+                                );
+                              },
+                              onDelete: () {},
+                              onImagetap: null,
+                            );
+                          },
+                        ),
               ),
             ],
           ),
@@ -92,98 +153,99 @@ class GalleryPage extends StatelessWidget {
 }
 
 class GalleryItemCard extends StatelessWidget {
-  final int index;
+  final String imageUrl;
+  final String title;
+  final VoidCallback? onImagetap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-  const GalleryItemCard({super.key, required this.index});
+  const GalleryItemCard({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onImagetap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final AdminController admincon = Get.put(AdminController());
-    return GetBuilder<AdminController>(
-      builder: (_) {
-        return Card(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10),
-            ),
-            side: BorderSide(color: const Color.fromARGB(255, 232, 232, 232)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        '${api + admincon.allgallerycover[index].imageCoverPath}',
-
-                    fit: BoxFit.cover,
-                    placeholder:
-                        (context, url) => Shimmer.fromColors(
-                          baseColor: Colors.grey.shade300,
-                          highlightColor: Colors.grey.shade100,
-                          child: Container(height: 140, color: Colors.white),
-                        ),
-                    errorWidget: (context, url, error) {
-                      log(error.toString());
-                      return Container(
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        side: const BorderSide(color: Color.fromARGB(255, 232, 232, 232)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: onImagetap,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder:
+                      (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(height: 140, color: Colors.white),
+                      ),
+                  errorWidget:
+                      (context, url, error) => Container(
                         height: 140,
                         color: Colors.white,
                         child: const Center(
                           child: Icon(Icons.broken_image, color: Colors.grey),
                         ),
-                      );
-                    },
-                  ),
+                      ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${admincon.allgallerycover[index].title}',
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            admincon.setselectedgallerycover(
-                              id: admincon.allgallerycover[index].id,
-                              context: context,
-                            );
-                          },
-                          icon: const Icon(Icons.edit, size: 20),
-                          tooltip: 'Edit',
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.delete, size: 20),
-                          tooltip: 'Delete',
-                          color: Colors.red,
-                        ),
-                      ],
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit, size: 20),
+                      tooltip: 'Edit',
+                    ),
+                    IconButton(
+                      onPressed: onDelete,
+                      icon: const Icon(Icons.delete, size: 20),
+                      tooltip: 'Delete',
+                      color: Colors.red,
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
