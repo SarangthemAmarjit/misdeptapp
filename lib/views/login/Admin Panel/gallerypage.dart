@@ -108,11 +108,7 @@ class GalleryPage extends StatelessWidget {
                                     );
                                   },
                                   onDelete: () {},
-                                  onImagetap: () {
-                                    admincon.settogetspecificcoverimages(
-                                      gcid: admincon.allgallerycover[index].id,
-                                    );
-                                  },
+                                  onImagetap: null,
                                 );
                               },
                             )
@@ -138,8 +134,14 @@ class GalleryPage extends StatelessWidget {
                                   context: context,
                                 );
                               },
-                              onDelete: () {},
-                              onImagetap: null,
+                              onDelete: () {
+                                admincon.removeselectedcover(context: context,id:  admincon.allgallerycover[index].id);
+                              },
+                              onImagetap: (){
+                                 admincon.settogetspecificcoverimages(
+                                      gcid: admincon.allgallerycover[index].id,
+                                    );
+                              },
                             );
                           },
                         ),

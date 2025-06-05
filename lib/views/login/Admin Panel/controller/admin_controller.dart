@@ -28,13 +28,14 @@ class AdminController extends GetxController {
   List<UserModel> get allusers => _allusers;
 
   bool _isgalleryimagepage = false;
-bool get isgalleryimagepage =>_isgalleryimagepage;
+  bool get isgalleryimagepage => _isgalleryimagepage;
 
   List<GalleryModel> _allgallery = [];
   List<GalleryModel> get allgallery => _allgallery;
 
-   List<GalleryModel> _allgalleryforspecificgallerycover = [];
-  List<GalleryModel> get allgalleryforspecificgallerycover => _allgalleryforspecificgallerycover;
+  List<GalleryModel> _allgalleryforspecificgallerycover = [];
+  List<GalleryModel> get allgalleryforspecificgallerycover =>
+      _allgalleryforspecificgallerycover;
 
   List<GalleryCovermodel> _allgallerycover = [];
   List<GalleryCovermodel> get allgallerycover => _allgallerycover;
@@ -55,11 +56,13 @@ bool get isgalleryimagepage =>_isgalleryimagepage;
     getallrecentactivity();
     getallgallerycover();
   }
-settogetspecificcoverimages({required int gcid}){
-_allgalleryforspecificgallerycover = _allgallery.where((ga)=>ga.gcid==gcid).toList();
-_isgalleryimagepage = true;
-update();
-}
+
+  settogetspecificcoverimages({required int gcid}) {
+    _allgalleryforspecificgallerycover =
+        _allgallery.where((ga) => ga.gcid == gcid).toList();
+    _isgalleryimagepage = true;
+    update();
+  }
 
   void getallusers() async {
     var response = await ApiService(
@@ -170,10 +173,92 @@ update();
     update();
   }
 
+  removeselectedcover({required int id, required BuildContext context}) {
+    showDeleteConfirmationDialog(
+      context: context,
+      onConfirm: () {
+        ApiService(baseUrl: api).delete('/api/GalleryCovers/$id').then((val) {
+          if (val.statusCode >= 200 && val.statusCode < 300) {
+            showSuccessDialog(
+              context: context,
+              message: 'Deleted successfully',
+            );
+          } else {
+            showSuccessDialog(
+              context: context,
+              message: 'Failed to deleted item',
+              title: 'Failed',
+            );
+          }
+        });
+      },
+    );
+  }
+
   setselectedgallerycover({required int id, required BuildContext context}) {
     _selectedgallerycover = _allgallerycover.firstWhere((gal) => gal.id == id);
     update();
     showAddGalleryCoverDialog(context);
+  }
+
+  Future<void> showSuccessDialog({
+    required BuildContext context,
+    String title = 'Success',
+    String message = 'Operation completed successfully.',
+    VoidCallback? onOk,
+  }) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.green),
+              SizedBox(width: 8),
+              Text('Success'),
+            ],
+          ),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                if (onOk != null) onOk(); // Optional action
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showDeleteConfirmationDialog({
+    required BuildContext context,
+    required VoidCallback onConfirm,
+  }) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Confirmation'),
+          content: const Text('Are you sure you want to delete this item?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                onConfirm(); // Perform delete action
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void showAddGalleryCoverDialog(BuildContext context) {
@@ -186,7 +271,7 @@ update();
     Uint8List? selectedImageBytes; // For web
 
     String? selectedImageName;
-    DateTime _selectedDate = DateTime.now();
+    DateTime selectedDate0 = DateTime.now();
 
     String? selectedCategory;
 
@@ -195,7 +280,7 @@ update();
       builder: (context) {
         if (_selectedgallerycover != null) {
           titleController.text = _selectedgallerycover!.title;
-          _selectedDate = _selectedgallerycover!.eventDate;
+          selectedDate0 = _selectedgallerycover!.eventDate;
         }
 
         return StatefulBuilder(
@@ -228,16 +313,16 @@ update();
               }
             }
 
-            Future<void> _selectDate() async {
+            Future<void> selectDate() async {
               final pickedDate = await showDatePicker(
                 context: context,
-                initialDate: _selectedDate,
+                initialDate: selectedDate0,
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
               );
-              if (pickedDate != null && pickedDate != _selectedDate) {
+              if (pickedDate != null && pickedDate != selectedDate0) {
                 setState(() {
-                  _selectedDate = pickedDate;
+                  selectedDate0 = pickedDate;
                 });
               }
             }
@@ -247,13 +332,6 @@ update();
                 if (selectedImageBytes == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Please select an image')),
-                  );
-                  return;
-                }
-
-                if (selectedCategory == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select a category')),
                   );
                   return;
                 }
@@ -341,7 +419,9 @@ update();
                                       borderRadius: BorderRadius.circular(8),
                                       child: CachedNetworkImage(
                                         imageUrl:
-                                            '${api + _selectedgallerycover!.imageCoverPath}',
+                                            api +
+                                            _selectedgallerycover!
+                                                .imageCoverPath,
 
                                         fit: BoxFit.cover,
                                         placeholder:
@@ -429,7 +509,7 @@ update();
 
                         // Description Field
                         InkWell(
-                          onTap: _selectDate,
+                          onTap: selectDate,
                           child: InputDecorator(
                             decoration: InputDecoration(
                               labelText: 'Date',
@@ -445,7 +525,7 @@ update();
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(DateFormat.yMMMMd().format(_selectedDate)),
+                                Text(DateFormat.yMMMMd().format(selectedDate0)),
                                 Icon(Icons.arrow_drop_down),
                               ],
                             ),
