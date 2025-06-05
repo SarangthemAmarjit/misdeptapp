@@ -13,7 +13,7 @@ class GalleryModel {
   String title;
   DateTime date;
   String description;
-  List<String> imagePaths;
+  String imagePath;
 
   GalleryModel({
     required this.id,
@@ -21,7 +21,7 @@ class GalleryModel {
     required this.title,
     required this.date,
     required this.description,
-    required this.imagePaths,
+    required this.imagePath,
   });
 
   factory GalleryModel.fromJson(Map<String, dynamic> json) => GalleryModel(
@@ -30,13 +30,7 @@ class GalleryModel {
     title: json["Title"],
     date: DateTime.parse(json["Date"]),
     description: json["Description"],
-    imagePaths:
-        json["ImagePath"]
-            .toString()
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList(),
+    imagePath: json["ImagePath"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -45,6 +39,6 @@ class GalleryModel {
     "Title": title,
     "Date": date.toIso8601String(),
     "Description": description,
-    "ImagePath": imagePaths.join(","),
+    "ImagePath": imagePath,
   };
 }

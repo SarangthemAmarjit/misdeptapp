@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -49,6 +50,13 @@ class AdminController extends GetxController {
   List<ActivityModel> _allactivity = [];
   List<ActivityModel> get allactivity => _allactivity;
 
+  final covertitleController = TextEditingController();
+
+  // Add these variables to your dialog state
+  Uint8List? coverselectedImageBytes; // For web
+
+  DateTime coverselectedDate0 = DateTime.now();
+
   getalldatas() {
     getallusers();
     getallgallery();
@@ -61,6 +69,11 @@ class AdminController extends GetxController {
     _allgalleryforspecificgallerycover =
         _allgallery.where((ga) => ga.gcid == gcid).toList();
     _isgalleryimagepage = true;
+    update();
+  }
+
+  closedgalleryimage() {
+    _isgalleryimagepage = false;
     update();
   }
 
@@ -98,17 +111,26 @@ class AdminController extends GetxController {
     update();
   }
 
-  void updategallerycover({required int id}) async {
-    var response = await ApiService(baseUrl: api).put(
-      '/api/GalleryCovers/$id',
-      headers: {'Content-Type': 'application/json'},
-      body: {},
+  void updategallerycover({
+    required int id,
+    required Uint8List byteimage,
+    required String title,
+    required DateTime eventDate,
+  }) async {
+    final response = await ApiService(baseUrl: api).putgallerycover(
+      endpoint: '/api/GalleryCovers/$id',
+      imageBytes: byteimage,
+      eventdate: eventDate,
+      title: title,
+      id: id.toString(),
     );
 
-    var data = galleryCovermodelFromJson(response.body);
-
-    _allgallerycover = data;
-    update();
+    if (response.statusCode >= 200 && response.statusCode < 400) {
+      print('Update successful!');
+      getallgallerycover();
+    } else {
+      print('Update failed with status: ${response.statusCode}');
+    }
   }
 
   void getallnotification() async {
@@ -179,6 +201,7 @@ class AdminController extends GetxController {
       onConfirm: () {
         ApiService(baseUrl: api).delete('/api/GalleryCovers/$id').then((val) {
           if (val.statusCode >= 200 && val.statusCode < 300) {
+            getallgallerycover();
             showSuccessDialog(
               context: context,
               message: 'Deleted successfully',
@@ -198,7 +221,7 @@ class AdminController extends GetxController {
   setselectedgallerycover({required int id, required BuildContext context}) {
     _selectedgallerycover = _allgallerycover.firstWhere((gal) => gal.id == id);
     update();
-    showAddGalleryCoverDialog(context);
+    showAddGalleryCoverDialog(context, id);
   }
 
   Future<void> showSuccessDialog({
@@ -261,26 +284,29 @@ class AdminController extends GetxController {
     );
   }
 
-  void showAddGalleryCoverDialog(BuildContext context) {
+  Future<Uint8List> networkImageToBytes(String imageUrl) async {
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed to load image from $imageUrl');
+    }
+  }
+
+  void updateGalleryCover() async {
+    String imageUrl = 'http://10.10.1.31/uploads/Image/your-image.png';
+    // fetch from network or file picker
+  }
+
+  void showAddGalleryCoverDialog(BuildContext context, int? id) {
     final formKey = GlobalKey<FormState>();
-    final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
-    DateTime selectedDate = DateTime.now();
-
-    // Add these variables to your dialog state
-    Uint8List? selectedImageBytes; // For web
-
-    String? selectedImageName;
-    DateTime selectedDate0 = DateTime.now();
-
-    String? selectedCategory;
 
     showDialog(
       context: context,
       builder: (context) {
         if (_selectedgallerycover != null) {
-          titleController.text = _selectedgallerycover!.title;
-          selectedDate0 = _selectedgallerycover!.eventDate;
+          covertitleController.text = _selectedgallerycover!.title;
+          coverselectedDate0 = _selectedgallerycover!.eventDate;
         }
 
         return StatefulBuilder(
@@ -297,8 +323,7 @@ class AdminController extends GetxController {
 
                   // For web, we can use bytes directly
                   setState(() {
-                    selectedImageBytes = file.bytes;
-                    selectedImageName = file.name;
+                    coverselectedImageBytes = file.bytes;
                   });
 
                   // For mobile/desktop, use the path
@@ -316,47 +341,55 @@ class AdminController extends GetxController {
             Future<void> selectDate() async {
               final pickedDate = await showDatePicker(
                 context: context,
-                initialDate: selectedDate0,
+                initialDate: coverselectedDate0,
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
               );
-              if (pickedDate != null && pickedDate != selectedDate0) {
+              if (pickedDate != null && pickedDate != coverselectedDate0) {
                 setState(() {
-                  selectedDate0 = pickedDate;
+                  coverselectedDate0 = pickedDate;
                 });
               }
             }
 
-            void submitForm() {
+            void submitForm() async {
               if (formKey.currentState!.validate()) {
-                if (selectedImageBytes == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select an image')),
+                if (id == null) {
+                  if (coverselectedImageBytes == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please select an image')),
+                    );
+                    return;
+                  }
+
+                  if (coverselectedImageBytes == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please select an image')),
+                    );
+                    return;
+                  }
+
+                  if (coverselectedImageBytes == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please select an image')),
+                    );
+                    return;
+                  }
+
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pop(context);
+
+                  Uint8List imageBytes = await networkImageToBytes(
+                    "${api + _selectedgallerycover!.imageCoverPath}",
                   );
-                  return;
+                  updategallerycover(
+                    id: id,
+                    byteimage: coverselectedImageBytes ?? imageBytes,
+                    title: covertitleController.text,
+                    eventDate: coverselectedDate0,
+                  );
                 }
-
-                // Create gallery item object
-                final galleryItem = {
-                  "Title": titleController.text,
-                  "Date": DateFormat(
-                    'yyyy-MM-ddTHH:mm:ss',
-                  ).format(selectedDate),
-                  "Description": descriptionController.text,
-                  "Category": selectedCategory,
-                  "ImageFile": selectedImageBytes,
-                };
-
-                print('Submitting: $galleryItem');
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '"${titleController.text}" added to $selectedCategory',
-                    ),
-                    backgroundColor: Colors.green,
-                  ),
-                );
               }
             }
 
@@ -392,7 +425,7 @@ class AdminController extends GetxController {
                               border: Border.all(color: Colors.grey),
                             ),
                             child:
-                                selectedImageBytes == null &&
+                                coverselectedImageBytes == null &&
                                         _selectedgallerycover == null
                                     ? Expanded(
                                       child: Column(
@@ -414,7 +447,7 @@ class AdminController extends GetxController {
                                       ),
                                     )
                                     : _selectedgallerycover != null &&
-                                        selectedImageBytes == null
+                                        coverselectedImageBytes == null
                                     ? ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: CachedNetworkImage(
@@ -452,9 +485,9 @@ class AdminController extends GetxController {
                                       ),
                                     )
                                     : _selectedgallerycover != null &&
-                                        selectedImageBytes != null
+                                        coverselectedImageBytes != null
                                     ? Image.memory(
-                                      selectedImageBytes!,
+                                      coverselectedImageBytes!,
                                       fit: BoxFit.cover,
                                       errorBuilder: (
                                         context,
@@ -467,7 +500,7 @@ class AdminController extends GetxController {
                                       },
                                     )
                                     : Image.memory(
-                                      selectedImageBytes!,
+                                      coverselectedImageBytes!,
                                       fit: BoxFit.cover,
                                       errorBuilder: (
                                         context,
@@ -486,7 +519,7 @@ class AdminController extends GetxController {
 
                         // Title Field
                         TextFormField(
-                          controller: titleController,
+                          controller: covertitleController,
                           decoration: InputDecoration(
                             labelText: 'Title',
                             border: OutlineInputBorder(
@@ -525,7 +558,11 @@ class AdminController extends GetxController {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(DateFormat.yMMMMd().format(selectedDate0)),
+                                Text(
+                                  DateFormat.yMMMMd().format(
+                                    coverselectedDate0,
+                                  ),
+                                ),
                                 Icon(Icons.arrow_drop_down),
                               ],
                             ),
@@ -557,8 +594,8 @@ class AdminController extends GetxController {
                     ),
                     side: const BorderSide(color: Colors.blue),
                   ),
-                  child: const Text(
-                    "Submit",
+                  child: Text(
+                    _selectedgallerycover != null ? "Update" : "Submit",
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),

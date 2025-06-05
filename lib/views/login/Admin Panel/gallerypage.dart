@@ -34,7 +34,7 @@ class GalleryPage extends StatelessWidget {
                   OutlinedButton(
                     onPressed: () {
                       admincon.resetsetselectedgallerycover();
-                      admincon.showAddGalleryCoverDialog(context);
+                      admincon.showAddGalleryCoverDialog(context, null);
                     },
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -60,13 +60,32 @@ class GalleryPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Text(
-                'Manage your site gallery cover images',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.grey[400],
-                ),
-              ),
+              admincon.isgalleryimagepage
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Manage your site gallery cover images',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          admincon.closedgalleryimage();
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ],
+                  )
+                  : Text(
+                    'Manage your site gallery cover images',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.grey[400],
+                    ),
+                  ),
               const SizedBox(height: 32),
               // Gallery grid
               Expanded(
@@ -97,13 +116,17 @@ class GalleryPage extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return GalleryItemCard(
                                   imageUrl:
+                                      "${api + admincon.allgalleryforspecificgallerycover[index].imagePath}",
+                                  title:
                                       admincon
-                                          .allgallerycover[index]
-                                          .imageCoverPath,
-                                  title: admincon.allgallerycover[index].title,
+                                          .allgalleryforspecificgallerycover[index]
+                                          .title,
                                   onEdit: () {
                                     admincon.setselectedgallerycover(
-                                      id: admincon.allgallerycover[index].id,
+                                      id:
+                                          admincon
+                                              .allgalleryforspecificgallerycover[index]
+                                              .id,
                                       context: context,
                                     );
                                   },
@@ -124,9 +147,7 @@ class GalleryPage extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return GalleryItemCard(
                               imageUrl:
-                                  admincon
-                                      .allgallerycover[index]
-                                      .imageCoverPath,
+                                  "${api + admincon.allgallerycover[index].imageCoverPath}",
                               title: admincon.allgallerycover[index].title,
                               onEdit: () {
                                 admincon.setselectedgallerycover(
@@ -135,12 +156,15 @@ class GalleryPage extends StatelessWidget {
                                 );
                               },
                               onDelete: () {
-                                admincon.removeselectedcover(context: context,id:  admincon.allgallerycover[index].id);
+                                admincon.removeselectedcover(
+                                  context: context,
+                                  id: admincon.allgallerycover[index].id,
+                                );
                               },
-                              onImagetap: (){
-                                 admincon.settogetspecificcoverimages(
-                                      gcid: admincon.allgallerycover[index].id,
-                                    );
+                              onImagetap: () {
+                                admincon.settogetspecificcoverimages(
+                                  gcid: admincon.allgallerycover[index].id,
+                                );
                               },
                             );
                           },
