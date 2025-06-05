@@ -325,6 +325,7 @@ class AdminController extends GetxController {
                   setState(() {
                     coverselectedImageBytes = file.bytes;
                   });
+                  log("Selected Image : " + coverselectedImageBytes.toString());
 
                   // For mobile/desktop, use the path
                 }
