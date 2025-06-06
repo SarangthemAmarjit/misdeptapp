@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:misdeptapp/page2.dart';
 import 'package:misdeptapp/routes/app_routes.dart';
 import 'package:misdeptapp/views/landing/components/footer.dart';
 import 'package:misdeptapp/views/landing/components/healthcarejourney.dart';
@@ -21,7 +22,8 @@ class Landingpage extends StatelessWidget {
   Widget getPage(String key) {
     switch (key) {
       case 'landing':
-        return const MainPage();
+             return const DirectorateMISPage();
+     //   return const MainPage();
       case 'Healthy Living':
         return const HealthyLivingPage();
       case 'Vaccination':

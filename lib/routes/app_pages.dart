@@ -13,8 +13,8 @@ class AppPages {
   static final pages = [
     GetPage(
       name: AppRoutes.home,
-      // page: () => const HomeScreen(),
-      page: () => const DirectorateMISPage(),
+      page: () => const HomeScreen(),
+      // page: () => const DirectorateMISPage(),
       binding: BindingsBuilder(() => Get.lazyPut(() => LandingController())),
     ),
     GetPage(

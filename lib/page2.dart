@@ -8,20 +8,21 @@ class DirectorateMISPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            // Hero Section
-            _buildHeroSection(context),
-            // Content Sections
-            _buildContentSections(),
-            // Footer
-            _buildFooter(),
-          ],
-        ),
+    return Align(
+      alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // // Header
+          // _buildHeader(),
+          // Hero Section
+          _buildHeroSection(context),
+          // Content Sections
+          _buildContentSections(),
+          // Footer
+          _buildFooter(),
+        ],
       ),
     );
   }
