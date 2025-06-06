@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:misdeptapp/views/landing/components/topbar2.dart';
+import 'package:misdeptapp/views/landing/controller/landing_controller.dart';
 
 Color greencol = const Color(0xff008631);
 Color bordercolor = const Color.fromARGB(255, 179, 179, 179);
@@ -13,23 +15,38 @@ Color policeredcol = const Color(0xffd40708);
 
 final List<NavMenuItem> menuItems = [
   NavMenuItem(
-    title: "Staying healthy",
-    dropdownItems: ["Healthy Living", "Vaccination", "Mental Health"],
+    title: "Home",
+    onTap: () => Get.find<LandingController>().setcurrentpage('landing', 0),
   ),
-  NavMenuItem(
-    title: "Seeking healthcare",
-    dropdownItems: ["Find a Doctor", "Emergency"],
-  ),
-  NavMenuItem(title: "Ageing well", dropdownItems: ["Mobility", "Memory Care"]),
-  NavMenuItem(
-    title: "Managing expenses",
-    dropdownItems: ["Insurance", "Bills", "Savings"],
-  ),
-  NavMenuItem(title: "Resources", dropdownItems: ["Help Center", "Contact Us"]),
   NavMenuItem(
     title: "About",
-    onTap: () => debugPrint("Tapped About"), // No dropdown
+    dropdownItems: ["About Us", "Vision & Mission", "Genesis & Evolution"],
   ),
+  NavMenuItem(
+    title: "Services",
+    dropdownItems: [
+      "Core Responsibilities",
+      "CMIS Modules",
+      "Departments Covered",
+      "Training & Support",
+    ],
+  ),
+  NavMenuItem(
+    title: "Impact",
+    dropdownItems: [
+      "Governance Efficiency",
+      "Transparency & Accountability",
+      "Awards & Recognition",
+    ],
+  ),
+  NavMenuItem(title: "Contact"),
 ];
 
 var api = 'http://10.10.1.31';
+
+final List<String> missions = [
+  'To build and maintain a dynamic digital platform for comprehensive personnel and payroll management.',
+  'To empower departments with reliable and real-time information for efficient planning and governance.',
+  'To create a culture of data-driven decision-making at every administrative level.',
+  'To digitize and automate key financial and HR functions such as salary disbursement, service records, promotions, and sanctioned posts.',
+];

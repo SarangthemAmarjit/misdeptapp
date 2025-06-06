@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
     Widget leftContent = Container(
       width: ismobile ? double.infinity : null,
       height: ismobile ? null : size.height * 0.80,
-      color: const Color(0xFF0C5A7C),
+      color: const Color(0xFF237570),
       padding: const EdgeInsets.all(32),
       child: Padding(
         padding: EdgeInsets.only(left: ismobile ? 30 : 50),
@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
             mainAxisSize: ismobile ? MainAxisSize.min : MainAxisSize.max,
             children: [
               Text(
-                "Improving Our\nHealth In The\nNext Bound",
+                "Seamleass Systems\nSmarter Governance.",
                 style: TextStyle(
                   fontSize:
                       ismobile
@@ -43,8 +43,8 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const Text(
-                "MOH Committee of Supply 2025",
-                style: TextStyle(fontSize: 18, color: Colors.white70),
+                "Real-time employee management, transparent payroll, and secure digital records--powered by CMIS",
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -60,7 +60,10 @@ class HomePage extends StatelessWidget {
                     vertical: 14,
                   ),
                 ),
-                child: const Text("Find out more"),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: const Text("Learn more"),
+                ),
               ),
             ],
           ),
@@ -71,7 +74,10 @@ class HomePage extends StatelessWidget {
     Widget rightContent = SizedBox(
       width: ismobile ? double.infinity : null,
       height: ismobile ? 220 : size.height * 0.80,
-      child: Image.asset('assets/images/landing.png', fit: BoxFit.cover),
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: Image.asset('assets/images/Hero_infographic.png'),
+      ),
     );
 
     return Padding(
@@ -80,18 +86,18 @@ class HomePage extends StatelessWidget {
         left: ismobile ? 0 : 0,
         right: ismobile ? 0 : 0,
       ),
-      child:
-          ismobile
-              ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [leftContent, rightContent],
-              )
-              : Row(
-                children: [
-                  Expanded(flex: 1, child: leftContent),
-                  Expanded(flex: 1, child: rightContent),
-                ],
-              ),
+      child: Container(
+        color: const Color(0xFF237570),
+        child:
+            ismobile
+                ? Column(children: [leftContent, rightContent])
+                : Row(
+                  children: [
+                    Expanded(flex: 1, child: leftContent),
+                    Expanded(flex: 1, child: rightContent),
+                  ],
+                ),
+      ),
     );
   }
 }

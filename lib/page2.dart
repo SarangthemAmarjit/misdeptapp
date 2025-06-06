@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:misdeptapp/views/landing/components/footer.dart';
+import 'package:misdeptapp/views/landing/components/homepage.dart';
 
 class DirectorateMISPage extends StatelessWidget {
   const DirectorateMISPage({super.key});
@@ -17,70 +19,12 @@ class DirectorateMISPage extends StatelessWidget {
           // // Header
           // _buildHeader(),
           // Hero Section
-          _buildHeroSection(context),
+          HomePage(),
           // Content Sections
           _buildContentSections(),
           // Footer
-          _buildFooter(),
+          FooterSection(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFEAEDF0))),
-      ),
-      child: Row(
-        children: [
-          Row(
-            children: [
-              SvgPicture.string(
-                '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="#111418"/></svg>',
-                width: 16,
-                height: 16,
-              ),
-              const SizedBox(width: 16),
-              Text(
-                'Directorate of MIS',
-                style: GoogleFonts.publicSans(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: const Color(0xFF111418),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                _buildHeaderLink('About Us'),
-                _buildHeaderLink('Vision & Mission'),
-                _buildHeaderLink('Genesis & Evolution'),
-                _buildHeaderLink('Core Responsibilities'),
-                _buildHeaderLink('CMIS Modules'),
-                _buildHeaderLink('Departments & Scope'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderLink(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Text(
-        text,
-        style: GoogleFonts.publicSans(
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-          color: const Color(0xFF111418),
-        ),
       ),
     );
   }

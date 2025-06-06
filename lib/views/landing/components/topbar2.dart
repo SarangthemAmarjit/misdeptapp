@@ -56,7 +56,7 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
                     elevation: 8,
                     borderRadius: BorderRadius.circular(8),
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 160),
+                      constraints: const BoxConstraints(maxWidth: 180),
                       child: ListView(
                         padding: const EdgeInsets.all(8),
                         shrinkWrap: true,

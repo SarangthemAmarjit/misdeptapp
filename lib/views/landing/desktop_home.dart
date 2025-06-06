@@ -13,8 +13,10 @@ import 'package:misdeptapp/views/landing/components/topbar.dart';
 import 'package:misdeptapp/views/landing/components/topbar2.dart';
 import 'package:misdeptapp/views/landing/controller/landing_controller.dart';
 import 'package:misdeptapp/views/login/login_screen.dart';
-import 'package:misdeptapp/views/pages/fitness.dart';
-import 'package:misdeptapp/views/pages/mentalhealth.dart';
+import 'package:misdeptapp/views/pages/aboutus.dart';
+import 'package:misdeptapp/views/pages/genesis.dart';
+import 'package:misdeptapp/views/pages/responsibities.dart';
+import 'package:misdeptapp/views/pages/visionnmission.dart';
 
 class Landingpage extends StatelessWidget {
   const Landingpage({super.key});
@@ -22,14 +24,16 @@ class Landingpage extends StatelessWidget {
   Widget getPage(String key) {
     switch (key) {
       case 'landing':
-             return const DirectorateMISPage();
-     //   return const MainPage();
-      case 'Healthy Living':
-        return const HealthyLivingPage();
-      case 'Vaccination':
-        return const VaccicationPage();
-      case 'mentalhealth':
-        return const HealthyLivingPage();
+        return const DirectorateMISPage();
+      //   return const MainPage();
+      case 'About Us':
+        return const AboutusPage();
+      case 'Vision & Mission':
+        return const VisionPage();
+      case 'Genesis & Evolution':
+        return const GenesisPage();
+      case 'Core Responsibilities':
+        return const CoreResponsibilitiesPage();
       default:
         return const MainPage();
     }
@@ -104,7 +108,14 @@ class Landingpage extends StatelessWidget {
             foregroundColor: Colors.black,
             elevation: 1,
           ),
-          body: SingleChildScrollView(child: getPage(landcon.currentPage)),
+          body: SingleChildScrollView(
+            child:
+                landcon.currentPage == 'landing'
+                    ? getPage(landcon.currentPage)
+                    : Column(
+                      children: [getPage(landcon.currentPage), FooterSection()],
+                    ),
+          ),
         );
       },
     );
