@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:misdeptapp/views/landing/components/footer.dart';
+import 'package:misdeptapp/views/landing/components/healthcarejourney.dart';
+import 'package:misdeptapp/views/landing/components/healthregulation.dart';
 import 'package:misdeptapp/views/landing/components/homepage.dart';
 
 class DirectorateMISPage extends StatelessWidget {
@@ -116,68 +118,100 @@ class DirectorateMISPage extends StatelessWidget {
   }
 
   Widget _buildContentSections() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
-      constraints: const BoxConstraints(maxWidth: 1200),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionTitle('About Us'),
-          _buildParagraph(
-            'The Directorate of Management Information System (MIS) is a pivotal entity within the Finance Department of the Government of Manipur. Our mission is to spearhead e-governance initiatives and ensure robust data management across the state. We are committed to leveraging technology to enhance efficiency, transparency, and accountability in financial administration.',
-          ),
-          _buildSectionTitle('Vision and Mission'),
-          _buildParagraph(
-            'Our vision is to transform financial governance in Manipur through innovative technology solutions. Our mission is to provide cutting-edge MIS services, ensuring seamless data integration, process automation, and informed decision-making.',
-          ),
-          _buildSectionTitle('Genesis and Evolution'),
-          _buildTimeline(),
-          _buildSectionTitle('Core Responsibilities'),
-          _buildResponsibilitiesGrid(),
-          _buildSectionTitle('CMIS Modules & Functional Features'),
-          _buildModulesTable(),
-          _buildSectionTitle('Departments and Scope'),
-          _buildParagraph(
-            'CMIS is integrated with various departments across the Government of Manipur, including: Department of Finance, Department of Education, Department of Health, Department of Public Works, and more.',
-          ),
-          _buildSectionTitle('Governance Impact & Recognition'),
-          _buildParagraph(
-            'The implementation of CMIS has significantly improved financial governance in Manipur, leading to enhanced transparency, efficiency, and accountability. Our efforts have been recognized with the prestigious CSI SIG eGovernance Award for excellence in e-governance.',
-          ),
-          _buildSectionTitle('Latest Enhancements'),
-          _buildParagraph(
-            'We continuously enhance the CMIS portal with new features and updates. Recent enhancements include: Improved user interface, Enhanced reporting capabilities, Mobile accessibility, and Integration with new departments.',
-          ),
-          _buildSectionTitle('Contact Us'),
-          _buildParagraph(
-            'Directorate of Management Information System (MIS), Finance Department, Government of Manipur, Imphal, Manipur, India. Email: mis@manipur.gov.in Phone: +91-385-242XXXX',
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: SizedBox(
-              width: 200,
-              height: 40,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFB8CEE4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+    return Column(
+      children: [
+        Container(
+          color: Colors.grey[100],
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 200,
+              right: 200,
+              top: 100,
+              bottom: 100,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSectionTitle('About Us'),
+                _buildParagraph(
+                  'The Directorate of Management Information System (MIS) is a pivotal entity within the Finance Department of the Government of Manipur. Our mission is to spearhead e-governance initiatives and ensure robust data management across the state. We are committed to leveraging technology to enhance efficiency, transparency, and accountability in financial administration.',
                 ),
-                onPressed: () {},
-                child: Text(
-                  'Access CMIS Portal',
-                  style: GoogleFonts.publicSans(
-                    color: const Color(0xFF111418),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                _buildSectionTitle('Vision and Mission'),
+                _buildParagraph(
+                  'Our vision is to transform financial governance in Manipur through innovative technology solutions. Our mission is to provide cutting-edge MIS services, ensuring seamless data integration, process automation, and informed decision-making.',
                 ),
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+        Container(
+          color: Colors.green[50],
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 200,
+              right: 200,
+              top: 50,
+              bottom: 50,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // _buildSectionTitle('Genesis and Evolution'),
+                // _buildTimeline(),
+                _buildSectionTitle('Core Responsibilities'),
+                _buildResponsibilitiesGrid(),
+
+                // _buildSectionTitle('CMIS Modules & Functional Features'),
+                // _buildModulesTable(),
+                // _buildSectionTitle('Departments and Scope'),
+                // _buildParagraph(
+                //   'CMIS is integrated with various departments across the Government of Manipur, including: Department of Finance, Department of Education, Department of Health, Department of Public Works, and more.',
+                // ),
+                // _buildSectionTitle('Governance Impact & Recognition'),
+                // _buildParagraph(
+                //   'The implementation of CMIS has significantly improved financial governance in Manipur, leading to enhanced transparency, efficiency, and accountability. Our efforts have been recognized with the prestigious CSI SIG eGovernance Award for excellence in e-governance.',
+                // ),
+                // _buildSectionTitle('Latest Enhancements'),
+                // _buildParagraph(
+                //   'We continuously enhance the CMIS portal with new features and updates. Recent enhancements include: Improved user interface, Enhanced reporting capabilities, Mobile accessibility, and Integration with new departments.',
+                // ),
+                // _buildSectionTitle('Contact Us'),
+                // _buildParagraph(
+                //   'Directorate of Management Information System (MIS), Finance Department, Government of Manipur, Imphal, Manipur, India. Email: mis@manipur.gov.in Phone: +91-385-242XXXX',
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 12),
+                //   child: SizedBox(
+                //     width: 200,
+                //     height: 40,
+                //     child: ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //         backgroundColor: const Color(0xFFB8CEE4),
+                //         shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(12),
+                //         ),
+                //       ),
+                //       onPressed: () {},
+                //       child: Text(
+                //         'Access CMIS Portal',
+                //         style: GoogleFonts.publicSans(
+                //           color: const Color(0xFF111418),
+                //           fontWeight: FontWeight.bold,
+                //           fontSize: 14,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+        ),
+
+        Column(
+          children: [HealthcareJourneySection(), HealthRegulationsSection()],
+        ),
+      ],
     );
   }
 

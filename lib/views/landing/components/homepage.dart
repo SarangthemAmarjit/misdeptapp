@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:misdeptapp/config/responsive.dart';
+import 'package:misdeptapp/notice.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,7 +15,7 @@ class HomePage extends StatelessWidget {
 
     Widget leftContent = Container(
       width: ismobile ? double.infinity : null,
-      height: ismobile ? null : size.height * 0.80,
+      height: ismobile ? null : size.height * 0.70,
       color: const Color(0xFF237570),
       padding: const EdgeInsets.all(32),
       child: Padding(
@@ -71,18 +72,20 @@ class HomePage extends StatelessWidget {
       ),
     );
 
-    Widget rightContent = SizedBox(
-      width: ismobile ? double.infinity : null,
-      height: ismobile ? 220 : size.height * 0.80,
-      child: Align(
-        alignment: Alignment.bottomRight,
-        child: Image.asset('assets/images/Hero_infographic.png'),
+    Widget rightContent = Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/Hero_infographic.png'),
+        ),
       ),
+      width: ismobile ? double.infinity : null,
+      height: ismobile ? 220 : size.height * 0.70,
+      child: Align(alignment: Alignment.bottomRight, child: NoticeBoard()),
     );
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: ismobile ? 24 : size.height * 0.15,
+        // bottom: ismobile ? 24 : size.height * 0.15,
         left: ismobile ? 0 : 0,
         right: ismobile ? 0 : 0,
       ),

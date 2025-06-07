@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:misdeptapp/config/responsive.dart';
 
 class HealthcareJourneySection extends StatelessWidget {
@@ -90,33 +91,37 @@ class HealthcareJourneySection extends StatelessWidget {
             ? 20
             : 24;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: ismobile ? 32 : 48,
-        horizontal: ismobile ? 12 : 24,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            "Your healthcare journey",
-            style: TextStyle(
-              fontSize: titleFontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+    return Container(
+      color: Colors.grey[100],
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 216,
+          right: 216,
+          top: 70,
+          bottom: 62,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Your healthcare journey",
+              style: GoogleFonts.publicSans(
+                color: const Color(0xFF111418),
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                letterSpacing: -0.015,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "Find out how you are supported in managing your health at all stages of your life.",
-            style: TextStyle(fontSize: 14, color: Colors.black54),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: ismobile ? 20 : 32),
-          Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            const SizedBox(height: 8),
+            const Text(
+              "Find out how you are supported in managing your health at all stages of your life.",
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: ismobile ? 20 : 32),
+            Align(
+              alignment: Alignment.center,
               child:
                   ismobile
                       ? ListView.builder(
@@ -157,8 +162,8 @@ class HealthcareJourneySection extends StatelessWidget {
                         },
                       ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -74,6 +74,9 @@ class _TopNavWithModalMenuState extends State<TopNavWithModalMenu> {
                                   setState(() => activeIndex = null);
                                   debugPrint("Tapped $item");
                                   landcon.setcurrentpage(item, index);
+                                  // landcon.scrollToSection(
+                                  //   item,
+                                  // ); // 👈 scroll to section
                                 },
                               );
                             }).toList(),

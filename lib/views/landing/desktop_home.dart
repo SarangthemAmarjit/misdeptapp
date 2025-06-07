@@ -9,29 +9,30 @@ import 'package:misdeptapp/views/landing/components/healthcarejourney.dart';
 import 'package:misdeptapp/views/landing/components/healthcaresection.dart';
 import 'package:misdeptapp/views/landing/components/healthregulation.dart';
 import 'package:misdeptapp/views/landing/components/homepage.dart';
-import 'package:misdeptapp/views/landing/components/topbar.dart';
+
 import 'package:misdeptapp/views/landing/components/topbar2.dart';
 import 'package:misdeptapp/views/landing/controller/landing_controller.dart';
-import 'package:misdeptapp/views/login/login_screen.dart';
-import 'package:misdeptapp/views/pages/aboutus.dart';
-import 'package:misdeptapp/views/pages/genesis.dart';
+import 'package:misdeptapp/views/pages/about/aboutsection.dart';
+
 import 'package:misdeptapp/views/pages/responsibities.dart';
-import 'package:misdeptapp/views/pages/visionnmission.dart';
+
 
 class Landingpage extends StatelessWidget {
   const Landingpage({super.key});
 
-  Widget getPage(String key) {
+  Widget getPage(String key, LandingController landcon) {
     switch (key) {
       case 'landing':
         return const DirectorateMISPage();
       //   return const MainPage();
       case 'About Us':
-        return const AboutusPage();
+        return Aboutsection(
+          sectionKeys: landcon.aboutsectionKeys, // 👇 pass keys
+        );
       case 'Vision & Mission':
-        return const VisionPage();
+        return  Aboutsection(sectionKeys: landcon.aboutsectionKeys,);
       case 'Genesis & Evolution':
-        return const GenesisPage();
+        return  Aboutsection(sectionKeys: landcon.aboutsectionKeys,);
       case 'Core Responsibilities':
         return const CoreResponsibilitiesPage();
       default:
@@ -48,19 +49,6 @@ class Landingpage extends StatelessWidget {
           backgroundColor: Colors.white,
           appBar: AppBar(
             actionsPadding: EdgeInsets.only(left: 70),
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: InkWell(
-                hoverColor: Colors.transparent,
-                onTap: () {
-                  landcon.setcurrentpage('landing', 0);
-                },
-                child: Image.asset(
-                  'assets/images/logo2.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
 
             actions: [
               InkWell(
@@ -68,10 +56,10 @@ class Landingpage extends StatelessWidget {
                 onTap: () {
                   landcon.setcurrentpage('landing', 0);
                 },
-
-                child: const Text(
-                  "MIS DEPARTMENT\nMANIPUR",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                child: Image.asset(
+                  height: 45,
+                  'assets/images/MIS-Logo.png',
+                  fit: BoxFit.contain,
                 ),
               ),
               TopNavWithModalMenu(),
@@ -108,13 +96,20 @@ class Landingpage extends StatelessWidget {
             foregroundColor: Colors.black,
             elevation: 1,
           ),
-          body: SingleChildScrollView(
-            child:
-                landcon.currentPage == 'landing'
-                    ? getPage(landcon.currentPage)
-                    : Column(
-                      children: [getPage(landcon.currentPage), FooterSection()],
-                    ),
+          body: GetBuilder<LandingController>(
+            builder: (_) {
+              return SingleChildScrollView(
+                child:
+                    landcon.currentPage == 'landing'
+                        ? getPage(landcon.currentPage, landcon)
+                        : Column(
+                          children: [
+                            getPage(landcon.currentPage, landcon),
+                            FooterSection(),
+                          ],
+                        ),
+              );
+            },
           ),
         );
       },

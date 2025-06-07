@@ -25,31 +25,30 @@ class VisionPage extends StatelessWidget {
                   horizontal: 200,
                   vertical: 50,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        _breadcrumbLink(
-                          text: "Home",
-                          ontap: () {
-                            lancon.setcurrentpage('landing', 0);
-                          },
-                        ),
-                        const Text(" > "),
-                        _breadcrumbLink(
-                          text: menuItems[lancon.selectedmenuindex].title,
-                          ontap: null,
-                        ),
-                        const Text(" > "),
-                        _breadcrumbText(lancon.currentPage),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
+                    // Row(
+                    //   children: [
+                    //     _breadcrumbLink(
+                    //       text: "Home",
+                    //       ontap: () {
+                    //         lancon.setcurrentpage('landing', 0);
+                    //       },
+                    //     ),
+                    //     const Text(" > "),
+                    //     _breadcrumbLink(
+                    //       text: menuItems[lancon.selectedmenuindex].title,
+                    //       ontap: null,
+                    //     ),
+                    //     const Text(" > "),
+                    //     _breadcrumbText(lancon.currentPage),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 30),
 
                     // Page title
                     Text(
-                      lancon.currentPage,
+                      'Vision & Mission',
                       style: GoogleFonts.inter(
                         fontSize: 40,
                         fontWeight: FontWeight.w700,

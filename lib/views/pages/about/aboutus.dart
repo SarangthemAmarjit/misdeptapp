@@ -24,38 +24,16 @@ class AboutusPage extends StatelessWidget {
                   horizontal: 200,
                   vertical: 50,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        _breadcrumbLink(
-                          text: "Home",
-                          ontap: () {
-                            lancon.setcurrentpage('landing', 0);
-                          },
-                        ),
-                        const Text(" > "),
-                        _breadcrumbLink(
-                          text: menuItems[lancon.selectedmenuindex].title,
-                          ontap: null,
-                        ),
-                        const Text(" > "),
-                        _breadcrumbText(lancon.currentPage),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Page title
                     Text(
-                      lancon.currentPage,
+                      'About Us',
                       style: GoogleFonts.inter(
                         fontSize: 40,
                         fontWeight: FontWeight.w700,
                         color: Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -67,7 +45,7 @@ class AboutusPage extends StatelessWidget {
                 horizontal: 200,
                 vertical: 50,
               ),
-              child: Container(
+              child: SizedBox(
                 height: 300,
                 child: Column(
                   children: [

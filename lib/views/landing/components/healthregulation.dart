@@ -7,54 +7,48 @@ class HealthRegulationsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSmallScreen = MediaQuery.of(context).size.width < 800;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 48, left: 24, right: 24),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 230, 247, 230),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child:
-            isSmallScreen
-                ? Column(
-                  children: [
-                    Image.asset(
-                      'assets/images/health-regulations.jpg',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 230, 247, 230),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child:
+          isSmallScreen
+              ? Column(
+                children: [
+                  Image.asset(
+                    'assets/images/health-regulations.jpg',
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  Padding(padding: const EdgeInsets.all(24), child: _Content()),
+                ],
+              )
+              : Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(8),
+                      ),
+                      child: Image.asset(
+                        'assets/images/health-regulations.jpg',
+                        height: 320,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(24),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
                       child: _Content(),
                     ),
-                  ],
-                )
-                : Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          bottomLeft: Radius.circular(8),
-                        ),
-                        child: Image.asset(
-                          'assets/images/health-regulations.jpg',
-                          height: 320,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: _Content(),
-                      ),
-                    ),
-                  ],
-                ),
-      ),
+                  ),
+                ],
+              ),
     );
   }
 }

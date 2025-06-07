@@ -9,7 +9,8 @@ import 'package:misdeptapp/views/login/Admin%20Panel/controller/admin_controller
 
 class LandingController extends GetxController {
   String _currentpage = 'landing';
-  int _selectedmenuindex = 0;
+  String? pendingScrollTarget;
+  final int _selectedmenuindex = 0;
   int _selectedadminpageindex = 0;
   String _admincurrentpage = 'dashboard';
   int get selectedmenuindex => _selectedmenuindex;
@@ -23,11 +24,13 @@ class LandingController extends GetxController {
     super.onInit();
   }
 
-  void setcurrentpage(String page, int ind) {
-    // Your _logic here
+  void setcurrentpage(String page, int index, {String? scrollTo}) {
     _currentpage = page;
-    _selectedmenuindex = ind;
-    update(); // Notify listeners about the change
+    if (scrollTo != null) {
+      pendingScrollTarget = page;
+    }
+    update(); // triggers rebuild
+    scrollToSection(page);
   }
 
   void setadmincurrentpage(String page, int ind) {
@@ -35,5 +38,37 @@ class LandingController extends GetxController {
     _admincurrentpage = page;
     _selectedadminpageindex = ind;
     update(); // Notify listeners about the change
+  }
+
+  // Scroll logic
+  final scrollController = ScrollController();
+
+  // Section keys for scroll targets
+  final aboutsectionKeys = {
+    'About Us': GlobalKey(),
+    'Vision & Mission': GlobalKey(),
+    'Genesis & Evolution': GlobalKey(),
+  };
+
+  void scrollToSection(String sectionName) {
+    log(sectionName.toString());
+    final key = aboutsectionKeys[sectionName];
+    if (key != null && key.currentContext != null) {
+      log('key not null');
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      pendingScrollTarget = null; // reset
+    }
+  }
+
+  void checkPendingScroll() {
+    if (pendingScrollTarget != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollToSection(pendingScrollTarget!);
+      });
+    }
   }
 }
